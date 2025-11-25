@@ -26,6 +26,29 @@ class User(db.Model):
     bio = db.Column(db.Text)
     photos = db.Column(db.JSON, default=list)
 
+    # Extended Profile Info
+    height = db.Column(db.Integer)  # in cm
+    weight = db.Column(db.Integer)  # in kg
+    body_type = db.Column(db.String(30))  # slim, athletic, average, curvy, plus_size
+    hair_color = db.Column(db.String(30))
+    eye_color = db.Column(db.String(30))
+    zodiac_sign = db.Column(db.String(20))
+    education = db.Column(db.String(50))  # high_school, bachelor, master, phd
+    occupation = db.Column(db.String(100))
+    company = db.Column(db.String(100))
+    languages = db.Column(db.JSON, default=list)  # ["Russian", "English", "German"]
+    
+    # Lifestyle
+    smoking = db.Column(db.String(20))  # never, sometimes, regularly
+    drinking = db.Column(db.String(20))  # never, socially, regularly
+    children = db.Column(db.String(30))  # no, yes_living_together, yes_living_separately, want_someday
+    
+    # Interests (stored as JSON array)
+    interests = db.Column(db.JSON, default=list)  # ["travel", "music", "sport", "art", ...]
+    
+    # Looking for (detailed)
+    relationship_type = db.Column(db.String(30))  # serious, casual, friendship, not_sure
+
     # Goal Type: relationship, friendship, intimate_services, casual
     goal = db.Column(db.String(30), nullable=False)
 

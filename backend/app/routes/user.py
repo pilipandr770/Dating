@@ -118,12 +118,35 @@ def get_user_profile(user_id):
             'gender': user.gender,
             'city': user.city or 'Не указано',
             'bio': user.bio or '',
-            'photos': first_photo,  # Only first photo for preview
+            'photos': photos_array,  # Return all photos for full profile view
             'subscription_plan': user.subscription_plan or 'free',
             'trust_score': user.trust_score if user.trust_score is not None else 50,
             'is_service_provider': user.is_service_provider or False,
             'hourly_rate': user.hourly_rate,
             'service_verified': user.service_verified or False,
+            'services_offered': user.services_offered or [],
+            
+            # Extended profile
+            'height': user.height,
+            'weight': user.weight,
+            'body_type': user.body_type,
+            'hair_color': user.hair_color,
+            'eye_color': user.eye_color,
+            'zodiac_sign': user.zodiac_sign,
+            'education': user.education,
+            'occupation': user.occupation,
+            'company': user.company,
+            'languages': user.languages or [],
+            'smoking': user.smoking,
+            'drinking': user.drinking,
+            'children': user.children,
+            'interests': user.interests or [],
+            'relationship_type': user.relationship_type,
+            'goal': user.goal,
+            
+            # Activity
+            'last_active': user.last_active.isoformat() if user.last_active else None,
+            'created_at': user.created_at.isoformat() if user.created_at else None,
         }
 
         response_data = {
