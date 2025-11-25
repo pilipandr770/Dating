@@ -233,7 +233,11 @@ export default function ProfileView() {
   const userInitial = (user.first_name?.[0] || user.username?.[0] || 'U').toUpperCase();
   const interests = user.interests || [];
   const languages = user.languages || [];
-  const isProvider = user.is_service_provider && user.hourly_rate;
+  const isProvider = user.is_service_provider;
+  const hasHourlyRate = user.hourly_rate && user.hourly_rate > 0;
+  
+  // Debug log
+  console.log('[ProfileView] User:', user.username, 'isProvider:', isProvider, 'hourlyRate:', user.hourly_rate);
 
   // Calculate online status
   const getOnlineStatus = () => {
@@ -323,17 +327,15 @@ export default function ProfileView() {
               Фото ({photos.length})
             </button>
 
-            {isProvider && (
-              <button
-                onClick={() => setActiveTab('booking')}
-                className={`flex items-center gap-2 px-4 py-3 border-b-2 transition whitespace-nowrap ${
-                  activeTab === 'booking' ? 'border-purple-600 text-purple-600' : 'border-transparent text-gray-600 hover:text-gray-900'
-                }`}
-              >
-                <Calendar className="w-4 h-4" />
-                Бронирование
-              </button>
-            )}
+            <button
+              onClick={() => setActiveTab('booking')}
+              className={`flex items-center gap-2 px-4 py-3 border-b-2 transition whitespace-nowrap ${
+                activeTab === 'booking' ? 'border-purple-600 text-purple-600' : 'border-transparent text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <Calendar className="w-4 h-4" />
+              Бронирование
+            </button>
 
             {matchId && (
               <>
@@ -756,75 +758,94 @@ export default function ProfileView() {
         )}
 
         {/* BOOKING TAB */}
-        {activeTab === 'booking' && isProvider && (
+        {activeTab === 'booking' && (
           <div className="max-w-2xl mx-auto">
             <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+              {/* Header */}
               <div className="bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-8 text-white text-center">
-                <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden border-4 border-white shadow-lg">
-                  {photos[0] ? (
+                <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden border-4 border-white shadow-lg bg-white/20 flex items-center justify-center">
+                  {photos && photos[0] ? (
                     <img src={photos[0]} alt={displayName} className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-white/20 text-3xl font-bold">
-                      {userInitial}
-                    </div>
+                    <span className="text-3xl font-bold">{userInitial}</span>
                   )}
                 </div>
                 <h2 className="text-2xl font-bold mb-2">{displayName}</h2>
-                <div className="flex items-center justify-center gap-2 mb-4">
-                  <Sparkles className="w-5 h-5" />
-                  <span className="text-lg">Провайдер услуг</span>
-                  {user.service_verified && (
-                    <span className="bg-green-400 px-2 py-0.5 rounded-full text-xs font-bold">✓ Верифицирован</span>
-                  )}
-                </div>
-                <div className="text-4xl font-bold">
-                  {user.hourly_rate?.toLocaleString()} ₽<span className="text-lg font-normal">/час</span>
-                </div>
+                {isProvider && (
+                  <div className="flex items-center justify-center gap-2 mb-4">
+                    <Sparkles className="w-5 h-5" />
+                    <span className="text-lg">Провайдер услуг</span>
+                    {user?.service_verified && (
+                      <span className="bg-green-400 px-2 py-0.5 rounded-full text-xs font-bold">✓</span>
+                    )}
+                  </div>
+                )}
+                {hasHourlyRate && (
+                  <div className="text-4xl font-bold">
+                    {user?.hourly_rate?.toLocaleString()} ₽<span className="text-lg font-normal">/час</span>
+                  </div>
+                )}
               </div>
 
               <div className="p-6">
-                {/* Services offered */}
-                {user.services_offered && user.services_offered.length > 0 && (
-                  <div className="mb-6">
-                    <h3 className="font-semibold text-gray-800 mb-3">Услуги:</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {user.services_offered.map((service, idx) => (
-                        <span key={idx} className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
-                          {service}
-                        </span>
-                      ))}
+                {!isProvider ? (
+                  <div className="text-center py-8">
+                    <Calendar className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+                    <h3 className="text-xl font-bold text-gray-800 mb-2">Не является провайдером</h3>
+                    <p className="text-gray-600">Этот пользователь не предоставляет услуги.</p>
+                  </div>
+                ) : !hasHourlyRate ? (
+                  <div className="text-center py-8">
+                    <Calendar className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+                    <h3 className="text-xl font-bold text-gray-800 mb-2">Бронирование недоступно</h3>
+                    <p className="text-gray-600">Провайдер ещё не настроил цены на свои услуги.</p>
+                  </div>
+                ) : (
+                  <>
+                    {/* Services offered */}
+                    {user?.services_offered && user.services_offered.length > 0 && (
+                      <div className="mb-6">
+                        <h3 className="font-semibold text-gray-800 mb-3">Услуги:</h3>
+                        <div className="flex flex-wrap gap-2">
+                          {user.services_offered.map((service, idx) => (
+                            <span key={idx} className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
+                              {service}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Trust indicators */}
+                    <div className="grid grid-cols-3 gap-4 mb-6">
+                      <div className="text-center p-4 bg-gray-50 rounded-xl">
+                        <Shield className="w-8 h-8 mx-auto mb-2 text-green-500" />
+                        <p className="text-sm font-medium">Безопасная оплата</p>
+                      </div>
+                      <div className="text-center p-4 bg-gray-50 rounded-xl">
+                        <Star className="w-8 h-8 mx-auto mb-2 text-yellow-500" />
+                        <p className="text-sm font-medium">Рейтинг {trustScore}</p>
+                      </div>
+                      <div className="text-center p-4 bg-gray-50 rounded-xl">
+                        <CheckCircle className="w-8 h-8 mx-auto mb-2 text-blue-500" />
+                        <p className="text-sm font-medium">Проверенный</p>
+                      </div>
                     </div>
-                  </div>
+
+                    {/* Book button */}
+                    <button
+                      onClick={() => setShowBookingModal(true)}
+                      className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-4 rounded-xl hover:from-purple-700 hover:to-pink-700 transition font-bold text-lg shadow-lg flex items-center justify-center gap-2"
+                    >
+                      <Calendar className="w-6 h-6" />
+                      Забронировать встречу
+                    </button>
+
+                    <p className="text-center text-gray-500 text-sm mt-4">
+                      Оплата происходит безопасно через Stripe
+                    </p>
+                  </>
                 )}
-
-                {/* Trust indicators */}
-                <div className="grid grid-cols-3 gap-4 mb-6">
-                  <div className="text-center p-4 bg-gray-50 rounded-xl">
-                    <Shield className="w-8 h-8 mx-auto mb-2 text-green-500" />
-                    <p className="text-sm font-medium">Безопасная оплата</p>
-                  </div>
-                  <div className="text-center p-4 bg-gray-50 rounded-xl">
-                    <Star className="w-8 h-8 mx-auto mb-2 text-yellow-500" />
-                    <p className="text-sm font-medium">Рейтинг {trustScore}</p>
-                  </div>
-                  <div className="text-center p-4 bg-gray-50 rounded-xl">
-                    <CheckCircle className="w-8 h-8 mx-auto mb-2 text-blue-500" />
-                    <p className="text-sm font-medium">Проверенный</p>
-                  </div>
-                </div>
-
-                {/* Book button */}
-                <button
-                  onClick={() => setShowBookingModal(true)}
-                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-4 rounded-xl hover:from-purple-700 hover:to-pink-700 transition font-bold text-lg shadow-lg flex items-center justify-center gap-2"
-                >
-                  <Calendar className="w-6 h-6" />
-                  Забронировать встречу
-                </button>
-
-                <p className="text-center text-gray-500 text-sm mt-4">
-                  Оплата происходит безопасно через Stripe
-                </p>
               </div>
             </div>
           </div>
