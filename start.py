@@ -47,15 +47,21 @@ def check_requirements():
     
     # Проверка Node.js
     try:
-        result = subprocess.run(['node', '--version'], capture_output=True, text=True)
-        print(f"{Colors.YELLOW}[CHECK]{Colors.END} Node.js version: {result.stdout.strip()}")
+        result = subprocess.run(['node', '--version'], capture_output=True, text=True, shell=True)
+        if result.returncode == 0:
+            print(f"{Colors.YELLOW}[CHECK]{Colors.END} Node.js version: {result.stdout.strip()}")
+        else:
+            errors.append("Node.js не установлен! Скачайте с https://nodejs.org/")
     except FileNotFoundError:
         errors.append("Node.js не установлен! Скачайте с https://nodejs.org/")
     
     # Проверка npm
     try:
-        result = subprocess.run(['npm', '--version'], capture_output=True, text=True)
-        print(f"{Colors.YELLOW}[CHECK]{Colors.END} npm version: {result.stdout.strip()}")
+        result = subprocess.run(['npm', '--version'], capture_output=True, text=True, shell=True)
+        if result.returncode == 0:
+            print(f"{Colors.YELLOW}[CHECK]{Colors.END} npm version: {result.stdout.strip()}")
+        else:
+            errors.append("npm не найден!")
     except FileNotFoundError:
         errors.append("npm не найден!")
     
