@@ -110,7 +110,10 @@ export default function ProfileView() {
 
   const fetchUserProfile = async () => {
     try {
-      setLoading(true);
+      // Only show loading on first load, not on updates
+      if (!user) {
+        setLoading(true);
+      }
       const token = localStorage.getItem('access_token');
       const response = await axios.get(`http://localhost:5000/api/user/${userId}`, {
         headers: { 'Authorization': `Bearer ${token}` }
@@ -315,16 +318,6 @@ export default function ProfileView() {
             >
               <FileText className="w-4 h-4" />
               Анкета
-            </button>
-
-            <button
-              onClick={() => setActiveTab('photos')}
-              className={`flex items-center gap-2 px-4 py-3 border-b-2 transition whitespace-nowrap ${
-                activeTab === 'photos' ? 'border-pink-600 text-pink-600' : 'border-transparent text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              <Image className="w-4 h-4" />
-              Фото ({photos.length})
             </button>
 
             <button
@@ -541,6 +534,38 @@ export default function ProfileView() {
                     </button>
                   )}
                 </div>
+
+                {/* Screen Sharing - Always visible on Profile tab */}
+                <div className="mt-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Monitor className="w-5 h-5 text-blue-500" />
+                    <h3 className="font-semibold text-gray-800">Совместный просмотр</h3>
+                  </div>
+                  <p className="text-gray-600 text-sm mb-4">
+                    Делитесь экраном с партнёром — смотрите вместе видео или фильмы
+                  </p>
+                  <button
+                    onClick={async () => {
+                      try {
+                        const stream = await navigator.mediaDevices.getDisplayMedia({
+                          video: true,
+                          audio: true
+                        });
+                        console.log('Screen sharing started:', stream);
+                        alert('Шеринг экрана запущен! В полной версии это будет транслироваться партнёру.');
+                      } catch (err) {
+                        console.error('Screen share error:', err);
+                        if (err.name !== 'NotAllowedError') {
+                          alert('Не удалось запустить шеринг экрана');
+                        }
+                      }
+                    }}
+                    className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-3 px-4 rounded-xl hover:from-blue-600 hover:to-indigo-700 transition font-semibold flex items-center justify-center gap-2 shadow-lg"
+                  >
+                    <Monitor className="w-5 h-5" />
+                    Начать шеринг экрана
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -719,41 +744,97 @@ export default function ProfileView() {
                 )}
 
                 {/* No data message */}
-                {!user.height && !user.weight && !user.body_type && !user.occupation && !user.smoking && interests.length === 0 && (
+                {!user.height && !user.weight && !user.body_type && !user.occupation && !user.smoking && interests.length === 0 && photos.length === 0 && (
                   <div className="text-center py-8 text-gray-500">
                     <FileText className="w-12 h-12 mx-auto mb-4 text-gray-300" />
                     <p>Пользователь ещё не заполнил расширенную анкету</p>
                   </div>
                 )}
+
+                {/* Photos Gallery Section */}
+                {photos.length > 0 && (
+                  <div>
+                    <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                      <Image className="w-5 h-5 text-indigo-500" />
+                      Фотографии ({photos.length})
+                    </h3>
+                    <div className="grid grid-cols-3 gap-3">
+                      {photos.map((photo, idx) => (
+                        <div 
+                          key={idx} 
+                          className="aspect-square rounded-xl overflow-hidden shadow-md cursor-pointer hover:scale-105 transition border-2 border-transparent hover:border-pink-400"
+                          onClick={() => {
+                            setCurrentPhotoIndex(idx);
+                            setActiveTab('profile');
+                          }}
+                        >
+                          <img src={photo} alt={`Photo ${idx + 1}`} className="w-full h-full object-cover" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Screen Sharing Section */}
+                <div>
+                  <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                    <Monitor className="w-5 h-5 text-blue-500" />
+                    Совместный просмотр
+                  </h3>
+                  <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4">
+                    <p className="text-gray-600 text-sm mb-4">
+                      Делитесь экраном с партнёром — смотрите вместе видео, фильмы или что угодно в реальном времени
+                    </p>
+                    <button
+                      onClick={async () => {
+                        try {
+                          const stream = await navigator.mediaDevices.getDisplayMedia({
+                            video: true,
+                            audio: true
+                          });
+                          // Handle screen share stream
+                          console.log('Screen sharing started:', stream);
+                          alert('Шеринг экрана запущен! В полной версии это будет транслироваться партнёру.');
+                        } catch (err) {
+                          console.error('Screen share error:', err);
+                          if (err.name !== 'NotAllowedError') {
+                            alert('Не удалось запустить шеринг экрана');
+                          }
+                        }
+                      }}
+                      className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-3 px-4 rounded-xl hover:from-blue-600 hover:to-indigo-700 transition font-semibold flex items-center justify-center gap-2 shadow-lg"
+                    >
+                      <Monitor className="w-5 h-5" />
+                      Начать шеринг экрана
+                    </button>
+                  </div>
+                </div>
+
+                {/* Quick Actions */}
+                <div className="pt-4 border-t border-gray-200">
+                  <div className="grid grid-cols-2 gap-3">
+                    {isProvider && hasHourlyRate && (
+                      <button
+                        onClick={() => setActiveTab('booking')}
+                        className="bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-xl hover:from-purple-700 hover:to-pink-700 transition font-semibold flex items-center justify-center gap-2"
+                      >
+                        <Calendar className="w-5 h-5" />
+                        Забронировать
+                      </button>
+                    )}
+                    {matchId && (
+                      <button
+                        onClick={() => setActiveTab('chat')}
+                        className="bg-pink-600 text-white py-3 rounded-xl hover:bg-pink-700 transition font-semibold flex items-center justify-center gap-2"
+                      >
+                        <MessageCircle className="w-5 h-5" />
+                        Написать
+                      </button>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        )}
-
-        {/* PHOTOS TAB */}
-        {activeTab === 'photos' && (
-          <div className="max-w-4xl mx-auto">
-            {photos.length === 0 ? (
-              <div className="bg-white rounded-lg shadow-lg p-12 text-center">
-                <Image className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <p className="text-gray-600">Нет фотографий</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {photos.map((photo, idx) => (
-                  <div 
-                    key={idx} 
-                    className="aspect-square rounded-xl overflow-hidden shadow-lg cursor-pointer hover:scale-105 transition"
-                    onClick={() => {
-                      setCurrentPhotoIndex(idx);
-                      setActiveTab('profile');
-                    }}
-                  >
-                    <img src={photo} alt={`Photo ${idx + 1}`} className="w-full h-full object-cover" />
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
         )}
 
