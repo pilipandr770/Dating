@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Camera, X, Upload, ArrowLeft, Save } from 'lucide-react';
+import { Camera, X, Upload, ArrowLeft, Save, Shield, CheckCircle, Clock, AlertTriangle, ExternalLink } from 'lucide-react';
 import { authAPI } from '../utils/api';
+import axios from 'axios';
 
 export default function EditProfile() {
   const navigate = useNavigate();
@@ -9,6 +10,10 @@ export default function EditProfile() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [uploading, setUploading] = useState(false);
+  
+  // Verification state
+  const [verificationStatus, setVerificationStatus] = useState(null);
+  const [verificationLoading, setVerificationLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     first_name: '',
@@ -27,6 +32,7 @@ export default function EditProfile() {
 
   useEffect(() => {
     fetchUserData();
+    fetchVerificationStatus();
   }, []);
 
   const fetchUserData = async () => {
@@ -47,6 +53,36 @@ export default function EditProfile() {
       setPhotos(user.photos || []);
     } catch (err) {
       setError('Не удалось загрузить данные профиля');
+    }
+  };
+
+  const fetchVerificationStatus = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/verification/status', {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+      });
+      setVerificationStatus(response.data);
+    } catch (err) {
+      console.error('Failed to fetch verification status:', err);
+    }
+  };
+
+  const startVerification = async () => {
+    setVerificationLoading(true);
+    try {
+      const response = await axios.post(
+        'http://localhost:5000/api/verification/create-session',
+        {},
+        { headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` } }
+      );
+      
+      // Redirect to Stripe Identity verification
+      if (response.data.url) {
+        window.location.href = response.data.url;
+      }
+    } catch (err) {
+      setError(err.response?.data?.error || 'Ошибка при создании сессии верификации');
+      setVerificationLoading(false);
     }
   };
 
@@ -177,6 +213,122 @@ export default function EditProfile() {
           )}
 
           <form onSubmit={handleSubmit}>
+            {/* Identity Verification Section */}
+            <div className="mb-8 p-6 bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl border border-pink-200">
+              <div className="flex items-start gap-4">
+                <div className={`w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0 ${
+                  verificationStatus?.identity_verified && verificationStatus?.identity_age_verified
+                    ? 'bg-green-100'
+                    : verificationStatus?.identity_verification_status === 'pending'
+                      ? 'bg-yellow-100'
+                      : 'bg-pink-100'
+                }`}>
+                  {verificationStatus?.identity_verified && verificationStatus?.identity_age_verified ? (
+                    <CheckCircle className="w-7 h-7 text-green-600" />
+                  ) : verificationStatus?.identity_verification_status === 'pending' ? (
+                    <Clock className="w-7 h-7 text-yellow-600" />
+                  ) : (
+                    <Shield className="w-7 h-7 text-pink-600" />
+                  )}
+                </div>
+                
+                <div className="flex-1">
+                  <h3 className="text-xl font-semibold text-gray-800 mb-1 flex items-center gap-2">
+                    Верификация личности
+                    {verificationStatus?.identity_verified && verificationStatus?.identity_age_verified && (
+                      <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
+                        ✓ Подтверждено
+                      </span>
+                    )}
+                  </h3>
+                  
+                  {verificationStatus?.identity_verified && verificationStatus?.identity_age_verified ? (
+                    <div>
+                      <p className="text-green-700 mb-2">
+                        Ваша личность и возраст (18+) подтверждены. Вы можете пользоваться всеми функциями платформы.
+                      </p>
+                      <div className="flex items-center gap-4 text-sm text-gray-600">
+                        {verificationStatus.identity_verified_at && (
+                          <span>Дата: {new Date(verificationStatus.identity_verified_at).toLocaleDateString('ru-RU')}</span>
+                        )}
+                        {verificationStatus.identity_document_type && (
+                          <span>Документ: {verificationStatus.identity_document_type.replace('_', ' ')}</span>
+                        )}
+                      </div>
+                    </div>
+                  ) : verificationStatus?.identity_verification_status === 'pending' ? (
+                    <div>
+                      <p className="text-yellow-700 mb-3">
+                        Верификация в процессе. Пожалуйста, завершите проверку документов.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => navigate('/verification')}
+                        className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition flex items-center gap-2"
+                      >
+                        <ExternalLink className="w-4 h-4" />
+                        Продолжить верификацию
+                      </button>
+                    </div>
+                  ) : (
+                    <div>
+                      <p className="text-gray-600 mb-3">
+                        Для полного доступа к платформе необходимо подтвердить свой возраст (18+). 
+                        Это защищает всех пользователей от мошенников и ботов.
+                      </p>
+                      
+                      <div className="flex flex-wrap items-center gap-3 mb-3">
+                        <div className="flex items-center gap-2 text-sm text-gray-500">
+                          <Shield className="w-4 h-4" />
+                          <span>GDPR Compliant</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-gray-500">
+                          <CheckCircle className="w-4 h-4" />
+                          <span>Данные хранятся в Stripe</span>
+                        </div>
+                      </div>
+                      
+                      <button
+                        type="button"
+                        onClick={startVerification}
+                        disabled={verificationLoading}
+                        className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-6 py-3 rounded-lg hover:opacity-90 transition flex items-center gap-2 font-medium disabled:opacity-50"
+                      >
+                        {verificationLoading ? (
+                          <>
+                            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                            Подготовка...
+                          </>
+                        ) : (
+                          <>
+                            <Shield className="w-5 h-5" />
+                            Пройти верификацию — €1.99
+                          </>
+                        )}
+                      </button>
+                      
+                      {verificationStatus?.verification_attempts > 0 && (
+                        <p className="text-sm text-gray-500 mt-2">
+                          Попыток: {verificationStatus.verification_attempts}/5
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              {/* Warning for unverified users */}
+              {!verificationStatus?.identity_verified && verificationStatus?.identity_verification_status !== 'pending' && (
+                <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg flex items-start gap-2">
+                  <AlertTriangle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                  <p className="text-sm text-yellow-700">
+                    <strong>Важно:</strong> Без верификации вы не сможете просматривать профили других пользователей, 
+                    отправлять сообщения и использовать другие функции платформы.
+                  </p>
+                </div>
+              )}
+            </div>
+
             {/* Photo Upload Section */}
             <div className="mb-8">
               <h3 className="text-xl font-semibold mb-4 flex items-center">

@@ -1,14 +1,13 @@
 # verification.py
 # API routes for Stripe Identity verification (18+ age verification)
 
-from flask import request, jsonify, Blueprint
+from flask import request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from app.routes import verification_bp
 from app.models import db, User
 from datetime import datetime
 import stripe
 import os
-
-verification_bp = Blueprint('verification', __name__)
 
 # Platform Stripe key
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
