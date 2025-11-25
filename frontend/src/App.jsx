@@ -15,6 +15,7 @@ import ProviderDashboard from './pages/ProviderDashboard'
 import Bookings from './pages/Bookings'
 import TestPayment from './pages/TestPayment'
 import ProfileView from './pages/ProfileView'
+import VerificationPage from './pages/VerificationPage'
 
 export default function App() {
   return (
@@ -36,6 +37,8 @@ export default function App() {
         <Route path="/provider/dashboard" element={<ProviderDashboard />} />
         <Route path="/bookings" element={<Bookings />} />
         <Route path="/test-payment" element={<TestPayment />} />
+        <Route path="/verification" element={<VerificationPage />} />
+        <Route path="/verification/complete" element={<VerificationPage />} />
       </Routes>
     </BrowserRouter>
   )

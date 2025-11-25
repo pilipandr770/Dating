@@ -2,12 +2,14 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authAPI } from '../utils/api';
 import axios from 'axios';
+import { Shield, AlertTriangle, CheckCircle, ArrowRight } from 'lucide-react';
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [likesCount, setLikesCount] = useState(0);
+  const [verificationStatus, setVerificationStatus] = useState(null);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -34,8 +36,20 @@ export default function Dashboard() {
       }
     };
 
+    const fetchVerificationStatus = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/verification/status', {
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+        });
+        setVerificationStatus(response.data);
+      } catch (err) {
+        console.error('Failed to fetch verification status:', err);
+      }
+    };
+
     fetchUser();
     fetchLikesCount();
+    fetchVerificationStatus();
   }, [navigate]);
 
   const handleLogout = () => {
@@ -172,6 +186,53 @@ export default function Dashboard() {
               <p className="text-yellow-800">
                 <strong>Внимание:</strong> Подтвердите свой email для доступа ко всем функциям
               </p>
+            </div>
+          )}
+
+          {/* Identity Verification Banner */}
+          {verificationStatus && !verificationStatus.can_use_platform && (
+            <div className="mt-6 p-6 bg-gradient-to-r from-pink-50 to-purple-50 border border-pink-200 rounded-xl">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-pink-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <Shield className="w-6 h-6 text-pink-600" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-1">
+                    Пройдите верификацию личности
+                  </h3>
+                  <p className="text-gray-600 mb-3">
+                    Для безопасного использования платформы необходимо подтвердить свой возраст (18+). 
+                    Это защищает всех пользователей от ботов и мошенников.
+                  </p>
+                  <div className="flex items-center gap-4">
+                    <button
+                      onClick={() => navigate('/verification')}
+                      className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-6 py-2 rounded-lg font-medium hover:opacity-90 transition flex items-center gap-2"
+                    >
+                      <Shield className="w-4 h-4" />
+                      Пройти верификацию — €1.99
+                    </button>
+                    <span className="text-sm text-gray-500">
+                      {verificationStatus.identity_verification_status === 'pending' ? (
+                        <span className="text-yellow-600">⏳ В процессе...</span>
+                      ) : (
+                        'Разовый платёж'
+                      )}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Verified Badge */}
+          {verificationStatus?.can_use_platform && (
+            <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-xl flex items-center gap-3">
+              <CheckCircle className="w-6 h-6 text-green-500" />
+              <div>
+                <span className="text-green-700 font-medium">Верификация пройдена</span>
+                <span className="text-green-600 text-sm ml-2">— ваша личность подтверждена</span>
+              </div>
             </div>
           )}
 

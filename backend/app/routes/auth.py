@@ -193,6 +193,10 @@ def get_current_user():
                 'phone_verified': user.phone_verified,
                 'trust_score': user.trust_score,
                 'ai_assistant_enabled': user.ai_assistant_enabled,
+                # Identity Verification
+                'identity_verified': user.identity_verified,
+                'identity_verification_status': user.identity_verification_status,
+                'identity_age_verified': user.identity_age_verified,
                 # 'photos': removed to reduce payload size
                 'created_at': user.created_at.isoformat() if user.created_at else None,
                 'is_admin': user.is_admin

@@ -16,7 +16,7 @@ def create_app(config_name='development'):
     socketio = SocketIO(app, cors_allowed_origins="*")
 
     # Register blueprints
-    from app.routes import auth_bp, user_bp, match_bp, chat_bp, payment_bp, video_bp
+    from app.routes import auth_bp, user_bp, match_bp, chat_bp, payment_bp, video_bp, verification_bp
     from app.routes.admin import admin_bp
     from app.routes.movie import movie_bp
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
@@ -27,6 +27,7 @@ def create_app(config_name='development'):
     app.register_blueprint(video_bp, url_prefix='/api/video')
     app.register_blueprint(admin_bp, url_prefix='/api/admin')
     app.register_blueprint(movie_bp, url_prefix='/api/movie')
+    app.register_blueprint(verification_bp, url_prefix='/api/verification')
 
     with app.app_context():
         # Create schema if using PostgreSQL

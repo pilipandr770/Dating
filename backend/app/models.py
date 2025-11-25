@@ -78,6 +78,16 @@ class User(db.Model):
     id_verified = db.Column(db.Boolean, default=False)
     trust_score = db.Column(db.Integer, default=50)
     warnings_count = db.Column(db.Integer, default=0)
+    
+    # Stripe Identity Verification (18+ Age Verification)
+    identity_verified = db.Column(db.Boolean, default=False)
+    identity_verification_status = db.Column(db.String(30), default='unverified')  # unverified, pending, verified, failed
+    stripe_identity_session_id = db.Column(db.String(100))
+    identity_verified_at = db.Column(db.DateTime)
+    identity_document_type = db.Column(db.String(30))  # passport, id_card, driving_license
+    identity_age_verified = db.Column(db.Boolean, default=False)  # Confirms 18+
+    verification_attempts = db.Column(db.Integer, default=0)
+    last_verification_attempt = db.Column(db.DateTime)
     is_active = db.Column(db.Boolean, default=True)
     is_banned = db.Column(db.Boolean, default=False)
     banned_reason = db.Column(db.Text)
