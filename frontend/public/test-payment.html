@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Payment - Direct API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px 10px 0;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .booking {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        pre {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test Payment - Direct API</h1>
+        <p>This page directly tests the payment API without React.</p>
+
+        <div id="status"></div>
+
+        <h2>Step 1: Get Token</h2>
+        <p>Login to get access token:</p>
+        <input type="text" id="email" placeholder="Email" value="test4@example.com" style="width: 200px; padding: 8px; margin-right: 10px;">
+        <input type="password" id="password" placeholder="Password" value="password123" style="width: 200px; padding: 8px; margin-right: 10px;">
+        <button onclick="login()">Login</button>
+
+        <div id="token-status"></div>
+
+        <h2>Step 2: Load Bookings</h2>
+        <button onclick="loadBookings()" id="loadBtn">Load Bookings</button>
+
+        <div id="bookings"></div>
+
+        <h2>Debug Log:</h2>
+        <pre id="log"></pre>
+    </div>
+
+    <script>
+        let accessToken = localStorage.getItem('access_token');
+        let logMessages = [];
+
+        function log(message) {
+            console.log(message);
+            logMessages.push(`[${new Date().toLocaleTimeString()}] ${message}`);
+            document.getElementById('log').textContent = logMessages.join('\n');
+        }
+
+        if (accessToken) {
+            document.getElementById('token-status').innerHTML = '<div class="success">✓ Token found in localStorage</div>';
+            log('Token found: ' + accessToken.substring(0, 20) + '...');
+        }
+
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            log(`Attempting login for ${email}...`);
+
+            try {
+                const response = await fetch('http://localhost:5000/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+                log('Login response: ' + JSON.stringify(data));
+
+                if (response.ok && data.access_token) {
+                    accessToken = data.access_token;
+                    localStorage.setItem('access_token', accessToken);
+                    document.getElementById('token-status').innerHTML = '<div class="success">✓ Login successful! Token saved.</div>';
+                    log('Token saved to localStorage');
+                } else {
+                    document.getElementById('token-status').innerHTML = '<div class="error">✗ Login failed: ' + (data.error || 'Unknown error') + '</div>';
+                    log('Login failed: ' + (data.error || 'Unknown error'));
+                }
+            } catch (error) {
+                document.getElementById('token-status').innerHTML = '<div class="error">✗ Network error: ' + error.message + '</div>';
+                log('Network error: ' + error.message);
+            }
+        }
+
+        async function loadBookings() {
+            if (!accessToken) {
+                alert('Please login first');
+                return;
+            }
+
+            document.getElementById('loadBtn').disabled = true;
+            document.getElementById('bookings').innerHTML = '<p>Loading...</p>';
+            log('Loading bookings...');
+
+            try {
+                const response = await fetch('http://localhost:5000/api/payment/bookings?role=client', {
+                    headers: {
+                        'Authorization': 'Bearer ' + accessToken
+                    }
+                });
+
+                const data = await response.json();
+                log('Bookings response: ' + JSON.stringify(data));
+
+                if (response.ok) {
+                    displayBookings(data.bookings);
+                } else {
+                    document.getElementById('bookings').innerHTML = '<div class="error">Error: ' + (data.error || 'Unknown error') + '</div>';
+                    log('Error loading bookings: ' + (data.error || 'Unknown error'));
+                }
+            } catch (error) {
+                document.getElementById('bookings').innerHTML = '<div class="error">Network error: ' + error.message + '</div>';
+                log('Network error: ' + error.message);
+            } finally {
+                document.getElementById('loadBtn').disabled = false;
+            }
+        }
+
+        function displayBookings(bookings) {
+            if (!bookings || bookings.length === 0) {
+                document.getElementById('bookings').innerHTML = '<p>No bookings found</p>';
+                log('No bookings found');
+                return;
+            }
+
+            log(`Found ${bookings.length} booking(s)`);
+
+            let html = `<h3>Found ${bookings.length} booking(s):</h3>`;
+
+            bookings.forEach((booking, index) => {
+                html += `
+                    <div class="booking">
+                        <h4>Booking #${index + 1}</h4>
+                        <p><strong>ID:</strong> ${booking.id}</p>
+                        <p><strong>Provider:</strong> ${booking.other_user?.username || 'Unknown'}</p>
+                        <p><strong>Date:</strong> ${new Date(booking.booking_date).toLocaleString()}</p>
+                        <p><strong>Duration:</strong> ${booking.duration_hours} hours</p>
+                        <p><strong>Amount:</strong> <span style="font-size: 20px; font-weight: bold; color: #4CAF50;">${booking.total_amount} ₽</span></p>
+                        <p><strong>Payment Status:</strong> <span style="font-weight: bold; color: ${booking.payment_status === 'paid' ? 'green' : 'orange'};">${booking.payment_status}</span></p>
+                        ${booking.payment_status === 'pending' ? `<button onclick="payBooking('${booking.id}')">💳 Pay Now</button>` : ''}
+                    </div>
+                `;
+            });
+
+            document.getElementById('bookings').innerHTML = html;
+        }
+
+        async function payBooking(bookingId) {
+            if (!confirm(`Pay for booking ${bookingId}?\n\nThis is a TEST payment.`)) {
+                return;
+            }
+
+            log(`Creating payment intent for booking ${bookingId}...`);
+            document.getElementById('status').innerHTML = '<div class="success">Creating payment...</div>';
+
+            try {
+                // Step 1: Create payment intent
+                const payResponse = await fetch(`http://localhost:5000/api/payment/bookings/${bookingId}/pay`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + accessToken
+                    }
+                });
+
+                const payData = await payResponse.json();
+                log('Payment intent response: ' + JSON.stringify(payData));
+
+                if (!payResponse.ok) {
+                    document.getElementById('status').innerHTML = '<div class="error">Payment failed: ' + (payData.error || 'Unknown error') + '</div>';
+                    log('Payment failed: ' + (payData.error || 'Unknown error'));
+                    return;
+                }
+
+                document.getElementById('status').innerHTML = '<div class="success">✓ Payment intent created! Simulating payment...</div>';
+                log('Payment intent created, waiting 2 seconds...');
+
+                // Step 2: Simulate payment delay
+                await new Promise(resolve => setTimeout(resolve, 2000));
+
+                // Step 3: Confirm payment
+                log('Confirming payment...');
+                const confirmResponse = await fetch(`http://localhost:5000/api/payment/bookings/${bookingId}/confirm-payment`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + accessToken
+                    }
+                });
+
+                const confirmData = await confirmResponse.json();
+                log('Confirm response: ' + JSON.stringify(confirmData));
+
+                if (confirmResponse.ok) {
+                    document.getElementById('status').innerHTML = '<div class="success">🎉 PAYMENT SUCCESSFUL! Booking is now paid.</div>';
+                    log('✓ Payment confirmed successfully!');
+                    // Reload bookings
+                    setTimeout(() => loadBookings(), 1000);
+                } else {
+                    document.getElementById('status').innerHTML = '<div class="error">Confirmation failed: ' + (confirmData.error || 'Unknown error') + '</div>';
+                    log('Confirmation failed: ' + (confirmData.error || 'Unknown error'));
+                }
+
+            } catch (error) {
+                document.getElementById('status').innerHTML = '<div class="error">Error: ' + error.message + '</div>';
+                log('Error: ' + error.message);
+            }
+        }
+
+        // Load bookings on page load if token exists
+        if (accessToken) {
+            log('Auto-loading bookings...');
+            loadBookings();
+        }
+    </script>
+</body>
+</html>
