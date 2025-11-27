@@ -510,3 +510,177 @@ def complete_booking(booking_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': f'Failed to complete booking: {str(e)}'}), 500
+
+
+# ==================== SUBSCRIPTION PLANS ====================
+
+# Stripe Price IDs from environment
+STRIPE_PRICES = {
+    'basic': os.getenv('STRIPE_PRICE_BASIC'),
+    'premium': os.getenv('STRIPE_PRICE_PREMIUM'),
+    'vip': os.getenv('STRIPE_PRICE_VIP')
+}
+
+# Plan features mapping
+PLAN_FEATURES = {
+    'free': {'ai_assistant': False, 'unlimited_likes': False, 'priority_support': False},
+    'basic': {'ai_assistant': False, 'unlimited_likes': False, 'priority_support': False},
+    'premium': {'ai_assistant': True, 'unlimited_likes': True, 'priority_support': False},
+    'vip': {'ai_assistant': True, 'unlimited_likes': True, 'priority_support': True}
+}
+
+
+@payment_bp.route('/create-subscription', methods=['POST'])
+@jwt_required()
+def create_subscription():
+    """Create Stripe Checkout session for subscription"""
+    try:
+        current_user_id = get_jwt_identity()
+        user = User.query.get(current_user_id)
+        data = request.get_json()
+        
+        plan = data.get('plan')
+        if plan not in STRIPE_PRICES:
+            return jsonify({'error': 'Invalid plan'}), 400
+        
+        price_id = STRIPE_PRICES.get(plan)
+        
+        # If no Stripe price configured, use test mode
+        if not price_id or price_id.startswith('price_XXXXX'):
+            print(f"[SUBSCRIPTION] Test mode - upgrading user to {plan}")
+            # Test mode - directly upgrade user
+            user.subscription_plan = plan
+            features = PLAN_FEATURES.get(plan, {})
+            user.ai_assistant_enabled = features.get('ai_assistant', False)
+            db.session.commit()
+            
+            return jsonify({
+                'success': True,
+                'message': f'Test mode: Upgraded to {plan}',
+                'subscription_plan': plan
+            }), 200
+        
+        # Create Stripe Checkout Session
+        stripe.api_key = PLATFORM_STRIPE_KEY
+        
+        # Get or create Stripe customer
+        if not user.stripe_customer_id:
+            customer = stripe.Customer.create(
+                email=user.email,
+                metadata={'user_id': str(user.id)}
+            )
+            user.stripe_customer_id = customer.id
+            db.session.commit()
+        
+        # Create checkout session
+        session = stripe.checkout.Session.create(
+            customer=user.stripe_customer_id,
+            payment_method_types=['card'],
+            line_items=[{
+                'price': price_id,
+                'quantity': 1,
+            }],
+            mode='subscription',
+            success_url=f"{os.getenv('FRONTEND_URL', 'http://localhost:3000')}/subscription?success=true",
+            cancel_url=f"{os.getenv('FRONTEND_URL', 'http://localhost:3000')}/subscription?canceled=true",
+            metadata={
+                'user_id': str(user.id),
+                'plan': plan
+            }
+        )
+        
+        return jsonify({
+            'sessionId': session.id,
+            'url': session.url
+        }), 200
+        
+    except stripe.error.StripeError as e:
+        print(f"[SUBSCRIPTION ERROR] Stripe: {str(e)}")
+        return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        print(f"[SUBSCRIPTION ERROR] {str(e)}")
+        db.session.rollback()
+        return jsonify({'error': f'Failed to create subscription: {str(e)}'}), 500
+
+
+@payment_bp.route('/cancel-subscription', methods=['POST'])
+@jwt_required()
+def cancel_subscription():
+    """Cancel user subscription"""
+    try:
+        current_user_id = get_jwt_identity()
+        user = User.query.get(current_user_id)
+        
+        if user.subscription_plan == 'free':
+            return jsonify({'error': 'No active subscription'}), 400
+        
+        # If user has Stripe subscription, cancel it
+        if user.stripe_subscription_id:
+            stripe.api_key = PLATFORM_STRIPE_KEY
+            try:
+                stripe.Subscription.delete(user.stripe_subscription_id)
+            except stripe.error.StripeError as e:
+                print(f"[CANCEL SUB] Stripe error: {e}")
+        
+        # Reset to free plan
+        user.subscription_plan = 'free'
+        user.ai_assistant_enabled = False
+        user.stripe_subscription_id = None
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Subscription cancelled'
+        }), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': f'Failed to cancel subscription: {str(e)}'}), 500
+
+
+@payment_bp.route('/subscription-webhook', methods=['POST'])
+def subscription_webhook():
+    """Handle Stripe subscription webhooks"""
+    payload = request.get_data(as_text=True)
+    sig_header = request.headers.get('Stripe-Signature')
+    webhook_secret = os.getenv('STRIPE_WEBHOOK_SECRET')
+    
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, webhook_secret
+        )
+    except ValueError:
+        return jsonify({'error': 'Invalid payload'}), 400
+    except stripe.error.SignatureVerificationError:
+        return jsonify({'error': 'Invalid signature'}), 400
+    
+    # Handle subscription events
+    if event['type'] == 'checkout.session.completed':
+        session = event['data']['object']
+        user_id = session['metadata'].get('user_id')
+        plan = session['metadata'].get('plan')
+        subscription_id = session.get('subscription')
+        
+        if user_id and plan:
+            user = User.query.get(user_id)
+            if user:
+                user.subscription_plan = plan
+                user.stripe_subscription_id = subscription_id
+                features = PLAN_FEATURES.get(plan, {})
+                user.ai_assistant_enabled = features.get('ai_assistant', False)
+                db.session.commit()
+                print(f"[WEBHOOK] User {user_id} upgraded to {plan}")
+    
+    elif event['type'] == 'customer.subscription.deleted':
+        subscription = event['data']['object']
+        subscription_id = subscription['id']
+        
+        user = User.query.filter_by(stripe_subscription_id=subscription_id).first()
+        if user:
+            user.subscription_plan = 'free'
+            user.ai_assistant_enabled = False
+            user.stripe_subscription_id = None
+            db.session.commit()
+            print(f"[WEBHOOK] User {user.id} subscription cancelled")
+    
+    return jsonify({'received': True}), 200
