@@ -126,25 +126,25 @@ export default function VerificationPage() {
   };
 
   const getStatusMessage = () => {
-    if (!verificationStatus) return 'Загрузка...';
+    if (!verificationStatus) return 'Laden...';
     
     switch (verificationStatus.identity_verification_status) {
       case 'verified':
         return verificationStatus.identity_age_verified 
-          ? 'Верификация пройдена! ✓' 
-          : 'Документ проверен, но возраст не подтверждён';
+          ? 'Verifizierung erfolgreich! ✓' 
+          : 'Dokument geprüft, aber Alter nicht bestätigt';
       case 'pending':
-        return 'Верификация в процессе...';
+        return 'Verifizierung läuft...';
       case 'processing':
-        return 'Проверка документов...';
+        return 'Dokumente werden geprüft...';
       case 'failed':
-        return 'Верификация не пройдена';
+        return 'Verifizierung fehlgeschlagen';
       case 'cancelled':
-        return 'Верификация отменена';
+        return 'Verifizierung abgebrochen';
       case 'requires_input':
-        return 'Требуется дополнительная информация';
+        return 'Zusätzliche Informationen erforderlich';
       default:
-        return 'Верификация не пройдена';
+        return 'Verifizierung fehlgeschlagen';
     }
   };
 
@@ -163,28 +163,28 @@ export default function VerificationPage() {
         <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
           <CheckCircle className="w-20 h-20 text-green-500 mx-auto mb-6" />
           <h1 className="text-2xl font-bold text-gray-800 mb-2">
-            Верификация пройдена! ✓
+            Verifizierung erfolgreich! ✓
           </h1>
           <p className="text-gray-600 mb-6">
-            Ваша личность подтверждена. Вы можете пользоваться всеми функциями платформы.
+            Ihre Identität wurde bestätigt. Sie können alle Funktionen der Plattform nutzen.
           </p>
           
           <div className="bg-green-50 rounded-xl p-4 mb-6">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600">Статус:</span>
-              <span className="text-green-600 font-medium">Верифицирован</span>
+              <span className="text-gray-600">Status:</span>
+              <span className="text-green-600 font-medium">Verifiziert</span>
             </div>
             {verificationStatus.identity_verified_at && (
               <div className="flex items-center justify-between text-sm mt-2">
-                <span className="text-gray-600">Дата:</span>
+                <span className="text-gray-600">Datum:</span>
                 <span className="text-gray-800">
-                  {new Date(verificationStatus.identity_verified_at).toLocaleDateString('ru-RU')}
+                  {new Date(verificationStatus.identity_verified_at).toLocaleDateString('de-DE')}
                 </span>
               </div>
             )}
             {verificationStatus.identity_document_type && (
               <div className="flex items-center justify-between text-sm mt-2">
-                <span className="text-gray-600">Документ:</span>
+                <span className="text-gray-600">Dokument:</span>
                 <span className="text-gray-800 capitalize">
                   {verificationStatus.identity_document_type.replace('_', ' ')}
                 </span>
@@ -196,7 +196,7 @@ export default function VerificationPage() {
             onClick={() => navigate('/discover')}
             className="w-full bg-gradient-to-r from-pink-500 to-purple-500 text-white py-3 rounded-xl font-semibold hover:opacity-90 transition flex items-center justify-center gap-2"
           >
-            Перейти к знакомствам
+            Zu den Bekanntschaften gehen
             <ArrowRight className="w-5 h-5" />
           </button>
         </div>
@@ -213,17 +213,17 @@ export default function VerificationPage() {
             {getStatusIcon()}
           </div>
           <h1 className="text-3xl font-bold text-gray-800 mb-2">
-            Верификация личности
+            Identitätsverifizierung
           </h1>
           <p className="text-gray-600">
-            Подтвердите свой возраст (18+) для безопасного использования платформы
+            Bestätigen Sie Ihr Alter (18+) für die sichere Nutzung der Plattform
           </p>
         </div>
 
         {/* Status Card */}
         <div className="bg-white rounded-2xl shadow-xl p-6 mb-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-800">Статус верификации</h2>
+            <h2 className="text-lg font-semibold text-gray-800">Verifizierungsstatus</h2>
             <span className={`px-3 py-1 rounded-full text-sm font-medium ${
               verificationStatus?.identity_verified 
                 ? 'bg-green-100 text-green-700'
@@ -239,7 +239,7 @@ export default function VerificationPage() {
             <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-4 flex items-start gap-3">
               <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
               <div>
-                <p className="text-red-700 font-medium">Ошибка</p>
+                <p className="text-red-700 font-medium">Fehler</p>
                 <p className="text-red-600 text-sm">{error}</p>
               </div>
             </div>
@@ -252,9 +252,9 @@ export default function VerificationPage() {
                 <FileText className="w-5 h-5 text-blue-600" />
               </div>
               <div>
-                <h3 className="font-medium text-gray-800">1. Загрузите документ</h3>
+                <h3 className="font-medium text-gray-800">1. Dokument hochladen</h3>
                 <p className="text-sm text-gray-600">
-                  Паспорт, ID-карта или водительское удостоверение
+                  Pass, Personalausweis oder Führerschein
                 </p>
               </div>
             </div>
@@ -264,9 +264,9 @@ export default function VerificationPage() {
                 <Camera className="w-5 h-5 text-purple-600" />
               </div>
               <div>
-                <h3 className="font-medium text-gray-800">2. Сделайте селфи</h3>
+                <h3 className="font-medium text-gray-800">2. Selfie machen</h3>
                 <p className="text-sm text-gray-600">
-                  Для сравнения с фото в документе
+                  Für den Vergleich mit dem Foto im Dokument
                 </p>
               </div>
             </div>
@@ -276,9 +276,9 @@ export default function VerificationPage() {
                 <CheckCircle className="w-5 h-5 text-green-600" />
               </div>
               <div>
-                <h3 className="font-medium text-gray-800">3. Автоматическая проверка</h3>
+                <h3 className="font-medium text-gray-800">3. Automatische Überprüfung</h3>
                 <p className="text-sm text-gray-600">
-                  Stripe проверит документы за несколько минут
+                  Stripe prüft die Dokumente in wenigen Minuten
                 </p>
               </div>
             </div>
@@ -294,12 +294,12 @@ export default function VerificationPage() {
               {processing ? (
                 <>
                   <RefreshCw className="w-5 h-5 animate-spin" />
-                  Подготовка...
+                  Vorbereitung...
                 </>
               ) : (
                 <>
                   <Shield className="w-5 h-5" />
-                  Начать верификацию — €1.99
+                  Verifizierung starten — €1.99
                 </>
               )}
             </button>
@@ -307,7 +307,7 @@ export default function VerificationPage() {
 
           {verificationStatus?.verification_attempts > 0 && (
             <p className="text-center text-sm text-gray-500 mt-3">
-              Попыток верификации: {verificationStatus.verification_attempts}/5
+              Verifizierungsversuche: {verificationStatus.verification_attempts}/5
             </p>
           )}
         </div>
@@ -320,38 +320,38 @@ export default function VerificationPage() {
               <h3 className="font-semibold text-gray-800">GDPR Compliant</h3>
             </div>
             <p className="text-sm text-gray-600">
-              Ваши данные хранятся в Stripe, а не на нашей платформе. 
-              Полное соответствие европейским нормам защиты данных.
+              Ihre Daten werden bei Stripe gespeichert, nicht auf unserer Plattform. 
+              Vollständige Einhaltung der europäischen Datenschutzstandards.
             </p>
           </div>
           
           <div className="bg-white rounded-xl shadow-lg p-5">
             <div className="flex items-center gap-3 mb-3">
               <User className="w-6 h-6 text-blue-500" />
-              <h3 className="font-semibold text-gray-800">Защита от ботов</h3>
+              <h3 className="font-semibold text-gray-800">Bot-Schutz</h3>
             </div>
             <p className="text-sm text-gray-600">
-              Верификация гарантирует, что на платформе только реальные люди старше 18 лет.
+              Die Verifizierung stellt sicher, dass nur echte Personen über 18 Jahren auf der Plattform sind.
             </p>
           </div>
           
           <div className="bg-white rounded-xl shadow-lg p-5">
             <div className="flex items-center gap-3 mb-3">
               <Shield className="w-6 h-6 text-purple-500" />
-              <h3 className="font-semibold text-gray-800">Безопасность</h3>
+              <h3 className="font-semibold text-gray-800">Sicherheit</h3>
             </div>
             <p className="text-sm text-gray-600">
-              Проверенные пользователи создают безопасное пространство для всех участников.
+              Verifizierte Benutzer schaffen einen sicheren Raum für alle Teilnehmer.
             </p>
           </div>
           
           <div className="bg-white rounded-xl shadow-lg p-5">
             <div className="flex items-center gap-3 mb-3">
               <CreditCard className="w-6 h-6 text-pink-500" />
-              <h3 className="font-semibold text-gray-800">Разовый платёж</h3>
+              <h3 className="font-semibold text-gray-800">Einmalzahlung</h3>
             </div>
             <p className="text-sm text-gray-600">
-              Верификация оплачивается один раз и действует на всё время использования платформы.
+              Die Verifizierung wird einmal bezahlt und gilt für die gesamte Nutzungszeit der Plattform.
             </p>
           </div>
         </div>
@@ -360,35 +360,35 @@ export default function VerificationPage() {
         <div className="bg-white rounded-xl shadow-lg p-6">
           <h3 className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
             <Info className="w-5 h-5 text-blue-500" />
-            Часто задаваемые вопросы
+            Häufig gestellte Fragen
           </h3>
           
           <div className="space-y-4">
             <div>
-              <h4 className="font-medium text-gray-800">Зачем нужна верификация?</h4>
+              <h4 className="font-medium text-gray-800">Warum ist eine Verifizierung erforderlich?</h4>
               <p className="text-sm text-gray-600">
-                Для защиты пользователей от мошенников и ботов, а также для подтверждения возраста 18+.
+                Zum Schutz der Benutzer vor Betrügern und Bots sowie zur Bestätigung des Alters 18+.
               </p>
             </div>
             
             <div>
-              <h4 className="font-medium text-gray-800">Какие документы принимаются?</h4>
+              <h4 className="font-medium text-gray-800">Welche Dokumente werden akzeptiert?</h4>
               <p className="text-sm text-gray-600">
-                Паспорт, национальное удостоверение личности (ID-карта) или водительское удостоверение.
+                Pass, Personalausweis (ID-Karte) oder Führerschein.
               </p>
             </div>
             
             <div>
-              <h4 className="font-medium text-gray-800">Где хранятся мои данные?</h4>
+              <h4 className="font-medium text-gray-800">Wo werden meine Daten gespeichert?</h4>
               <p className="text-sm text-gray-600">
-                Все документы обрабатываются и хранятся в Stripe — мы не имеем доступа к вашим документам.
+                Alle Dokumente werden von Stripe verarbeitet und gespeichert — wir haben keinen Zugriff auf Ihre Dokumente.
               </p>
             </div>
             
             <div>
-              <h4 className="font-medium text-gray-800">Почему верификация платная?</h4>
+              <h4 className="font-medium text-gray-800">Warum ist die Verifizierung kostenpflichtig?</h4>
               <p className="text-sm text-gray-600">
-                Stripe взимает плату за проверку документов. Это разовый платёж, который покрывает расходы на верификацию.
+                Stripe erhebt eine Gebühr für die Dokumentenprüfung. Dies ist eine einmalige Zahlung, die die Verifizierungskosten deckt.
               </p>
             </div>
           </div>
@@ -400,7 +400,7 @@ export default function VerificationPage() {
             onClick={() => navigate('/dashboard')}
             className="text-gray-600 hover:text-gray-800 transition"
           >
-            ← Вернуться в личный кабинет
+            ← Zurück zum Dashboard
           </button>
         </div>
       </div>

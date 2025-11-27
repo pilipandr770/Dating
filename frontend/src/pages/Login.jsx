@@ -22,7 +22,7 @@ export default function Login() {
     setError('');
 
     if (!formData.email || !formData.password) {
-      setError('Пожалуйста, заполните все поля');
+      setError('Bitte füllen Sie alle Felder aus');
       return;
     }
 
@@ -37,7 +37,7 @@ export default function Login() {
       // Redirect to dashboard
       navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.error || 'Ошибка входа. Проверьте email и пароль.');
+      setError(err.response?.data?.error || 'Anmeldefehler. Überprüfen Sie E-Mail und Passwort.');
     } finally {
       setLoading(false);
     }
@@ -50,8 +50,8 @@ export default function Login() {
           {/* Logo/Header */}
           <div className="text-center mb-8">
             <Heart className="w-16 h-16 text-pink-600 mx-auto mb-4" />
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Вход</h1>
-            <p className="text-gray-600">Добро пожаловать в LoveMatch</p>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Anmelden</h1>
+            <p className="text-gray-600">Willkommen bei LoveMatch</p>
           </div>
 
           {/* Error Message */}
@@ -77,7 +77,7 @@ export default function Login() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Пароль</label>
+              <label className="block text-sm font-medium mb-1">Passwort</label>
               <input
                 type="password"
                 name="password"
@@ -95,10 +95,10 @@ export default function Login() {
                   type="checkbox"
                   className="w-4 h-4 text-pink-600 border-gray-300 rounded focus:ring-pink-500"
                 />
-                <span className="ml-2 text-gray-600">Запомнить меня</span>
+                <span className="ml-2 text-gray-600">Angemeldet bleiben</span>
               </label>
               <Link to="/forgot-password" className="text-pink-600 hover:underline">
-                Забыли пароль?
+                Passwort vergessen?
               </Link>
             </div>
 
@@ -107,23 +107,23 @@ export default function Login() {
               disabled={loading}
               className="w-full bg-pink-600 text-white py-3 rounded-lg font-semibold hover:bg-pink-700 transition disabled:opacity-50"
             >
-              {loading ? 'Загрузка...' : 'Войти'}
+              {loading ? 'Laden...' : 'Anmelden'}
             </button>
           </form>
 
           {/* Divider */}
           <div className="my-6 flex items-center">
             <div className="flex-1 border-t border-gray-300"></div>
-            <span className="px-4 text-sm text-gray-500">или</span>
+            <span className="px-4 text-sm text-gray-500">oder</span>
             <div className="flex-1 border-t border-gray-300"></div>
           </div>
 
           {/* Register Link */}
           <div className="text-center">
             <p className="text-gray-600">
-              Нет аккаунта?{' '}
+              Kein Konto?{' '}
               <Link to="/register" className="text-pink-600 hover:underline font-semibold">
-                Зарегистрироваться
+                Registrieren
               </Link>
             </p>
           </div>
@@ -131,7 +131,7 @@ export default function Login() {
           {/* Back to Home */}
           <div className="mt-6 text-center">
             <Link to="/" className="text-sm text-gray-500 hover:text-gray-700">
-              ← Вернуться на главную
+              ← Zurück zur Startseite
             </Link>
           </div>
         </div>

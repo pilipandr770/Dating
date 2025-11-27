@@ -100,13 +100,13 @@ export default function ChatRoom() {
 
   const formatTime = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+    return date.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
   };
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-xl text-gray-600">Загрузка...</div>
+        <div className="text-xl text-gray-600">Laden...</div>
       </div>
     );
   }
@@ -118,7 +118,7 @@ export default function ChatRoom() {
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
           <Link to="/matches" className="flex items-center text-gray-600 hover:text-gray-900">
             <ArrowLeft className="w-5 h-5 mr-2" />
-            Назад
+            Zurück
           </Link>
 
           {otherUser && (
@@ -157,7 +157,7 @@ export default function ChatRoom() {
               }`}
             >
               <MessageCircle className="w-4 h-4" />
-              Чат
+              Chat
             </button>
 
             {roomInfo?.features.movie_theater && (
@@ -170,7 +170,7 @@ export default function ChatRoom() {
                 }`}
               >
                 <Film className="w-4 h-4" />
-                Кинотеатр
+                Kino
               </button>
             )}
 
@@ -183,7 +183,7 @@ export default function ChatRoom() {
               }`}
             >
               <Calendar className="w-4 h-4" />
-              Планирование
+              Planung
             </button>
 
             {roomInfo?.features.ai_assistant && (
@@ -196,7 +196,7 @@ export default function ChatRoom() {
                 }`}
               >
                 <Sparkles className="w-4 h-4" />
-                AI Помощник
+                AI-Assistent
               </button>
             )}
           </div>
@@ -212,7 +212,7 @@ export default function ChatRoom() {
               {messages.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-gray-400">
                   <MessageCircle className="w-16 h-16 mb-4" />
-                  <p>Напишите первое сообщение!</p>
+                  <p>Schreiben Sie die erste Nachricht!</p>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -252,7 +252,7 @@ export default function ChatRoom() {
                 type="text"
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
-                placeholder="Напишите сообщение..."
+                placeholder="Nachricht schreiben..."
                 className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
                 disabled={sending}
               />
@@ -262,7 +262,7 @@ export default function ChatRoom() {
                 className="bg-pink-600 text-white px-6 py-2 rounded-lg hover:bg-pink-700 transition disabled:opacity-50 flex items-center gap-2"
               >
                 <Send className="w-4 h-4" />
-                Отправить
+                Senden
               </button>
             </form>
           </>
@@ -278,24 +278,24 @@ export default function ChatRoom() {
           <div className="flex-1 bg-white rounded-lg shadow-lg p-8">
             <div className="text-center">
               <Calendar className="w-16 h-16 text-pink-600 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold mb-4">Планирование Встречи</h2>
+              <h2 className="text-2xl font-bold mb-4">Terminplanung</h2>
               <p className="text-gray-600 mb-6">
-                Спланируйте и забронируйте вашу встречу!
+                Planen und buchen Sie Ihr Treffen!
               </p>
               <div className="bg-pink-50 rounded-lg p-6 mb-6">
                 <p className="text-sm text-gray-700">
-                  Функция в разработке. Скоро вы сможете:
+                  Funktion in Entwicklung. Bald können Sie:
                 </p>
                 <ul className="mt-3 text-left text-sm text-gray-600 space-y-2">
-                  <li>• Предложить время и место встречи</li>
-                  <li>• Забронировать столик в ресторане</li>
-                  <li>• Купить билеты в кино/театр</li>
-                  <li>• Напоминания о встрече</li>
-                  <li>• Безопасная проверка местоположения</li>
+                  <li>• Zeit und Ort für das Treffen vorschlagen</li>
+                  <li>• Einen Tisch im Restaurant reservieren</li>
+                  <li>• Tickets für Kino/Theater kaufen</li>
+                  <li>• Erinnerungen an das Treffen</li>
+                  <li>• Sichere Standortüberprüfung</li>
                 </ul>
               </div>
               <button className="bg-pink-600 text-white px-6 py-3 rounded-lg hover:bg-pink-700 transition">
-                Запланировать встречу (скоро)
+                Treffen planen (bald)
               </button>
             </div>
           </div>
@@ -305,24 +305,24 @@ export default function ChatRoom() {
           <div className="flex-1 bg-white rounded-lg shadow-lg p-8">
             <div className="text-center">
               <Sparkles className="w-16 h-16 text-pink-600 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold mb-4">AI Ассистент</h2>
+              <h2 className="text-2xl font-bold mb-4">AI-Assistent</h2>
               <p className="text-gray-600 mb-6">
-                Умный помощник для вашего общения
+                Intelligenter Helfer für Ihre Kommunikation
               </p>
               <div className="bg-pink-50 rounded-lg p-6 mb-6">
                 <p className="text-sm text-gray-700">
-                  Функция в разработке. AI поможет вам:
+                  Funktion in Entwicklung. AI hilft Ihnen:
                 </p>
                 <ul className="mt-3 text-left text-sm text-gray-600 space-y-2">
-                  <li>• Предложения тем для разговора</li>
-                  <li>• Анализ сообщений на признаки мошенничества</li>
-                  <li>• Советы по общению</li>
-                  <li>• Перевод сообщений</li>
-                  <li>• Идеи для встреч</li>
+                  <li>• Vorschläge für Gesprächsthemen</li>
+                  <li>• Analyse von Nachrichten auf Betrugsmerkmale</li>
+                  <li>• Kommunikationsratschläge</li>
+                  <li>• Nachrichtenübersetzung</li>
+                  <li>• Ideen für Treffen</li>
                 </ul>
               </div>
               <button className="bg-pink-600 text-white px-6 py-3 rounded-lg hover:bg-pink-700 transition">
-                Получить совет AI (скоро)
+                AI-Rat erhalten (bald)
               </button>
             </div>
           </div>

@@ -89,7 +89,7 @@ export default function StripePaymentModal({ booking, onClose, onSuccess }) {
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">Оплата успешна!</h2>
             <p className="text-gray-600">
-              Бронирование оплачено. Провайдер получит уведомление.
+              Buchung bezahlt. Der Anbieter erhält eine Benachrichtigung.
             </p>
           </div>
         </div>
@@ -212,7 +212,7 @@ export default function StripePaymentModal({ booking, onClose, onSuccess }) {
               disabled={loading}
               className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-semibold disabled:opacity-50"
             >
-              Отмена
+              Abbrechen
             </button>
             <button
               type="submit"

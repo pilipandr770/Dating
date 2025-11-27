@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Dating Platform - Unified Startup Script
-Запускает backend (Flask) и frontend (Vite) одновременно
+Startet Backend (Flask) und Frontend (Vite) gleichzeitig
 """
 
 import subprocess
@@ -12,7 +12,7 @@ import time
 import threading
 from pathlib import Path
 
-# Цвета для консоли
+# Farben für die Konsole
 class Colors:
     HEADER = '\033[95m'
     BLUE = '\033[94m'
@@ -24,7 +24,7 @@ class Colors:
     BOLD = '\033[1m'
 
 def print_banner():
-    """Печатает красивый баннер"""
+    """Druckt ein schönes Banner"""
     banner = f"""
 {Colors.CYAN}╔══════════════════════════════════════════════════════════════╗
 ║                                                                ║
@@ -39,34 +39,34 @@ def print_banner():
     print(banner)
 
 def check_requirements():
-    """Проверяет наличие необходимых инструментов"""
+    """Prüft das Vorhandensein der erforderlichen Tools"""
     errors = []
     
-    # Проверка Python
+    # Python prüfen
     print(f"{Colors.YELLOW}[CHECK]{Colors.END} Python version: {sys.version.split()[0]}")
     
-    # Проверка Node.js
+    # Node.js prüfen
     try:
         result = subprocess.run(['node', '--version'], capture_output=True, text=True, shell=True)
         if result.returncode == 0:
             print(f"{Colors.YELLOW}[CHECK]{Colors.END} Node.js version: {result.stdout.strip()}")
         else:
-            errors.append("Node.js не установлен! Скачайте с https://nodejs.org/")
+            errors.append("Node.js ist nicht installiert! Laden Sie es von https://nodejs.org/ herunter")
     except FileNotFoundError:
-        errors.append("Node.js не установлен! Скачайте с https://nodejs.org/")
+        errors.append("Node.js ist nicht installiert! Laden Sie es von https://nodejs.org/ herunter")
     
-    # Проверка npm
+    # npm prüfen
     try:
         result = subprocess.run(['npm', '--version'], capture_output=True, text=True, shell=True)
         if result.returncode == 0:
             print(f"{Colors.YELLOW}[CHECK]{Colors.END} npm version: {result.stdout.strip()}")
         else:
-            errors.append("npm не найден!")
+            errors.append("npm nicht gefunden!")
     except FileNotFoundError:
-        errors.append("npm не найден!")
+        errors.append("npm nicht gefunden!")
     
     if errors:
-        print(f"\n{Colors.RED}[ERROR] Обнаружены проблемы:{Colors.END}")
+        print(f"\n{Colors.RED}[ERROR] Probleme gefunden:{Colors.END}")
         for error in errors:
             print(f"  - {error}")
         return False
@@ -74,10 +74,10 @@ def check_requirements():
     return True
 
 def load_env():
-    """Загружает переменные окружения из .env файла"""
+    """Lädt Umgebungsvariablen aus der .env-Datei"""
     env_path = Path(__file__).parent / '.env'
     if env_path.exists():
-        print(f"{Colors.GREEN}[ENV]{Colors.END} Загружаем .env из {env_path}")
+        print(f"{Colors.GREEN}[ENV]{Colors.END} Lade .env aus {env_path}")
         with open(env_path, 'r', encoding='utf-8') as f:
             for line in f:
                 line = line.strip()
@@ -85,27 +85,27 @@ def load_env():
                     key, value = line.split('=', 1)
                     os.environ[key.strip()] = value.strip()
     else:
-        print(f"{Colors.YELLOW}[WARN]{Colors.END} Файл .env не найден")
+        print(f"{Colors.YELLOW}[WARN]{Colors.END} .env-Datei nicht gefunden")
 
 def install_dependencies():
-    """Устанавливает зависимости если нужно"""
+    """Installiert Abhängigkeiten falls nötig"""
     root_dir = Path(__file__).parent
     backend_dir = root_dir / 'backend'
     frontend_dir = root_dir / 'frontend'
     
-    # Проверяем backend зависимости
+    # Backend-Abhängigkeiten prüfen
     if not (backend_dir / '__pycache__').exists():
-        print(f"{Colors.YELLOW}[INSTALL]{Colors.END} Устанавливаем Python зависимости...")
+        print(f"{Colors.YELLOW}[INSTALL]{Colors.END} Installiere Python-Abhängigkeiten...")
         subprocess.run([sys.executable, '-m', 'pip', 'install', '-r', 'requirements.txt'],
                       cwd=backend_dir, capture_output=True)
     
-    # Проверяем frontend зависимости
+    # Frontend-Abhängigkeiten prüfen
     if not (frontend_dir / 'node_modules').exists():
-        print(f"{Colors.YELLOW}[INSTALL]{Colors.END} Устанавливаем npm зависимости...")
+        print(f"{Colors.YELLOW}[INSTALL]{Colors.END} Installiere npm-Abhängigkeiten...")
         subprocess.run(['npm', 'install'], cwd=frontend_dir, capture_output=True)
 
 class ServerProcess:
-    """Класс для управления серверным процессом"""
+    """Klasse zur Verwaltung von Serverprozessen"""
     
     def __init__(self, name, command, cwd, color):
         self.name = name
@@ -116,14 +116,14 @@ class ServerProcess:
         self.thread = None
     
     def start(self):
-        """Запускает процесс в отдельном потоке"""
+        """Startet den Prozess in einem separaten Thread"""
         self.thread = threading.Thread(target=self._run, daemon=True)
         self.thread.start()
     
     def _run(self):
-        """Запускает и мониторит процесс"""
+        """Startet und überwacht den Prozess"""
         try:
-            # Используем shell=True на Windows для корректной работы
+            # Verwende shell=True unter Windows für korrekte Funktion
             if sys.platform == 'win32':
                 self.process = subprocess.Popen(
                     self.command,
@@ -146,7 +146,7 @@ class ServerProcess:
                     preexec_fn=os.setsid
                 )
             
-            # Читаем и выводим вывод процесса
+            # Lese und gebe die Prozessausgabe aus
             for line in self.process.stdout:
                 line = line.rstrip()
                 if line:
@@ -156,11 +156,11 @@ class ServerProcess:
             print(f"{Colors.RED}[{self.name} ERROR]{Colors.END} {e}")
     
     def stop(self):
-        """Останавливает процесс"""
+        """Stoppt den Prozess"""
         if self.process:
             try:
                 if sys.platform == 'win32':
-                    # На Windows используем taskkill
+                    # Unter Windows taskkill verwenden
                     subprocess.run(['taskkill', '/F', '/T', '/PID', str(self.process.pid)],
                                  capture_output=True)
                 else:
@@ -169,26 +169,26 @@ class ServerProcess:
                 pass
 
 def main():
-    """Главная функция запуска"""
+    """Hauptfunktion für den Start"""
     print_banner()
     
-    # Проверяем требования
+    # Anforderungen prüfen
     if not check_requirements():
         sys.exit(1)
     
     print()
     
-    # Загружаем .env
+    # Lade .env
     load_env()
     
-    # Устанавливаем зависимости если нужно
+    # Installiere Abhängigkeiten falls nötig
     install_dependencies()
     
     root_dir = Path(__file__).parent
     backend_dir = root_dir / 'backend'
     frontend_dir = root_dir / 'frontend'
     
-    # Создаем серверные процессы
+    # Erstelle Serverprozesse
     backend = ServerProcess(
         name="BACKEND",
         command=f"{sys.executable} run.py",
@@ -203,37 +203,37 @@ def main():
         color=Colors.BLUE
     )
     
-    # Запускаем серверы
-    print(f"\n{Colors.CYAN}[START]{Colors.END} Запуск серверов...\n")
+    # Starte Server
+    print(f"\n{Colors.CYAN}[START]{Colors.END} Starte Server...\n")
     print(f"{Colors.YELLOW}{'='*60}{Colors.END}")
     
     backend.start()
-    time.sleep(2)  # Даём бэкенду время на запуск
+    time.sleep(2)  # Gib dem Backend Zeit zum Starten
     frontend.start()
     
-    print(f"\n{Colors.GREEN}[INFO]{Colors.END} Нажмите Ctrl+C для остановки серверов\n")
+    print(f"\n{Colors.GREEN}[INFO]{Colors.END} Drücken Sie Ctrl+C, um die Server zu stoppen\n")
     print(f"{Colors.YELLOW}{'='*60}{Colors.END}\n")
     
-    # Ждём завершения
+    # Warte auf Beendigung
     try:
         while True:
             time.sleep(1)
-            # Проверяем, что процессы ещё работают
+            # Prüfe, ob Prozesse noch laufen
             if backend.process and backend.process.poll() is not None:
-                print(f"{Colors.RED}[ERROR]{Colors.END} Backend остановился неожиданно")
+                print(f"{Colors.RED}[ERROR]{Colors.END} Backend wurde unerwartet gestoppt")
                 break
             if frontend.process and frontend.process.poll() is not None:
-                print(f"{Colors.RED}[ERROR]{Colors.END} Frontend остановился неожиданно")
+                print(f"{Colors.RED}[ERROR]{Colors.END} Frontend wurde unerwartet gestoppt")
                 break
                 
     except KeyboardInterrupt:
-        print(f"\n\n{Colors.YELLOW}[STOP]{Colors.END} Останавливаем серверы...")
+        print(f"\n\n{Colors.YELLOW}[STOP]{Colors.END} Stoppe Server...")
     
-    # Останавливаем процессы
+    # Stoppe Prozesse
     frontend.stop()
     backend.stop()
     
-    print(f"{Colors.GREEN}[DONE]{Colors.END} Серверы остановлены. До свидания! {Colors.RED}♥{Colors.END}\n")
+    print(f"{Colors.GREEN}[DONE]{Colors.END} Server gestoppt. Auf Wiedersehen! {Colors.RED}♥{Colors.END}\n")
 
 if __name__ == '__main__':
     main()

@@ -1,51 +1,51 @@
 # Stripe Identity Verification Setup Guide
 
-## Обзор
+## Übersicht
 
-Stripe Identity - это система верификации личности, которая позволяет:
-- Подтвердить возраст пользователя (18+)
-- Защитить платформу от ботов и мошенников
-- Соответствовать требованиям GDPR (данные хранятся в Stripe)
+Stripe Identity ist ein Identitätsverifizierungssystem, das ermöglicht:
+- Das Alter des Benutzers zu bestätigen (18+)
+- Die Plattform vor Bots und Betrügern zu schützen
+- Den GDPR-Anforderungen zu entsprechen (Daten werden bei Stripe gespeichert)
 
-## Требования
+## Anforderungen
 
-1. **Stripe Account** с активированным Identity API
-2. **Stripe Secret Key** (тестовый или рабочий)
-3. **Webhook Endpoint** для получения событий верификации
+1. **Stripe-Konto** mit aktiviertem Identity API
+2. **Stripe Secret Key** (Test- oder Live-Modus)
+3. **Webhook Endpoint** zum Empfangen von Verifizierungsereignissen
 
-## Настройка Stripe Dashboard
+## Stripe Dashboard einrichten
 
-### 1. Активация Identity
+### 1. Identity aktivieren
 
-1. Войдите в [Stripe Dashboard](https://dashboard.stripe.com)
-2. Перейдите в **Products → Identity**
-3. Нажмите **Get started** и заполните форму активации
-4. Дождитесь одобрения (обычно мгновенно для тестового режима)
+1. Melden Sie sich im [Stripe Dashboard](https://dashboard.stripe.com) an
+2. Gehen Sie zu **Products → Identity**
+3. Klicken Sie auf **Get started** und füllen Sie das Aktivierungsformular aus
+4. Warten Sie auf die Genehmigung (normalerweise sofort im Testmodus)
 
-### 2. Настройка Webhook
+### 2. Webhook einrichten
 
-1. Перейдите в **Developers → Webhooks**
-2. Нажмите **Add endpoint**
+1. Gehen Sie zu **Developers → Webhooks**
+2. Klicken Sie auf **Add endpoint**
 3. URL: `https://your-domain.com/api/verification/webhook`
-4. Выберите события:
+4. Wählen Sie Ereignisse:
    - `identity.verification_session.verified`
    - `identity.verification_session.requires_input`
    - `identity.verification_session.canceled`
-5. Скопируйте **Webhook Signing Secret**
+5. Kopieren Sie den **Webhook Signing Secret**
 
-### 3. Настройка .env
+### 3. .env einrichten
 
 ```env
 # Stripe Identity Verification
 STRIPE_SECRET_KEY=sk_test_xxxxx
 STRIPE_IDENTITY_WEBHOOK_SECRET=whsec_xxxxx
-VERIFICATION_FEE=199  # €1.99 в центах
+VERIFICATION_FEE=199  # €1.99 in Cent
 ```
 
 ## API Endpoints
 
 ### GET /api/verification/status
-Получить текущий статус верификации пользователя.
+Ruft den aktuellen Verifizierungsstatus des Benutzers ab.
 
 **Response:**
 ```json
@@ -59,7 +59,7 @@ VERIFICATION_FEE=199  # €1.99 в центах
 ```
 
 ### POST /api/verification/create-session
-Создать сессию верификации Stripe Identity.
+Erstellt eine Stripe Identity Verifizierungssession.
 
 **Response:**
 ```json
@@ -74,110 +74,110 @@ VERIFICATION_FEE=199  # €1.99 в центах
 ```
 
 ### GET /api/verification/check-session/{session_id}
-Проверить статус сессии верификации.
+Prüft den Status der Verifizierungssession.
 
 ### GET /api/verification/require-check
-Проверить, может ли пользователь использовать платформу.
+Prüft, ob der Benutzer die Plattform verwenden kann.
 
 ### POST /api/verification/webhook
-Webhook для событий Stripe Identity.
+Webhook für Stripe Identity Ereignisse.
 
-## Статусы верификации
+## Verifizierungsstatus
 
-| Статус | Описание |
-|--------|----------|
-| `unverified` | Верификация не начата |
-| `pending` | Ожидание действий пользователя |
-| `processing` | Документы проверяются |
-| `verified` | Верификация успешна |
-| `failed` | Верификация не пройдена |
-| `cancelled` | Верификация отменена |
+| Status | Beschreibung |
+|--------|--------------|
+| `unverified` | Verifizierung nicht begonnen |
+| `pending` | Warte auf Benutzeraktionen |
+| `processing` | Dokumente werden geprüft |
+| `verified` | Verifizierung erfolgreich |
+| `failed` | Verifizierung fehlgeschlagen |
+| `cancelled` | Verifizierung abgebrochen |
 
-## Фронтенд интеграция
+## Frontend Integration
 
-### Страница верификации
-`/verification` - Основная страница верификации
+### Verifizierungsseite
+`/verification` - Hauptverifizierungsseite
 
-### Возврат после верификации
+### Rückkehr nach Verifizierung
 `/verification/complete?session_id={CHECKOUT_SESSION_ID}`
 
-### Компонент VerificationGate
+### VerificationGate Komponente
 ```jsx
 import VerificationGate from './components/VerificationGate';
 
-// Оберните защищённый контент
+// Schützen Sie den geschützten Inhalt
 <VerificationGate>
   <ProtectedContent />
 </VerificationGate>
 ```
 
-### Hook useVerificationStatus
+### useVerificationStatus Hook
 ```jsx
 import { useVerificationStatus } from './components/VerificationGate';
 
 const { loading, isVerified, canAccess } = useVerificationStatus();
 ```
 
-## Тестирование
+## Testen
 
-### Тестовые документы Stripe
-В тестовом режиме используйте документы с [Stripe Test Data](https://stripe.com/docs/identity/testing):
+### Stripe Testdokumente
+Im Testmodus verwenden Sie Dokumente aus [Stripe Test Data](https://stripe.com/docs/identity/testing):
 
-- **Успешная верификация**: Загрузите любое изображение документа
-- **Требует ввода**: Используйте размытое изображение
-- **Отклонено**: Используйте просроченный документ
+- **Erfolgreiche Verifizierung**: Laden Sie ein beliebiges Dokumentbild hoch
+- **Erfordert Eingabe**: Verwenden Sie ein unscharfes Bild
+- **Abgelehnt**: Verwenden Sie ein abgelaufenes Dokument
 
-### Тестовый сценарий
+### Testszenario
 
-1. Зарегистрируйте нового пользователя
-2. Перейдите в `/verification`
-3. Нажмите "Начать верификацию"
-4. Пройдите процесс в Stripe
-5. После возврата проверьте статус
+1. Registrieren Sie einen neuen Benutzer
+2. Gehen Sie zu `/verification`
+3. Klicken Sie auf "Verifizierung starten"
+4. Durchlaufen Sie den Prozess bei Stripe
+5. Überprüfen Sie nach der Rückkehr den Status
 
-## Безопасность
+## Sicherheit
 
 ### GDPR Compliance
-- Документы хранятся только в Stripe
-- Платформа получает только статус верификации
-- Пользователь может запросить удаление данных через Stripe
+- Dokumente werden nur bei Stripe gespeichert
+- Die Plattform erhält nur den Verifizierungsstatus
+- Benutzer können Löschung der Daten über Stripe anfordern
 
-### Защита от фрода
-- Лимит 5 попыток в день
-- Требуется живое фото (liveness check)
-- Сравнение селфи с фото в документе
+### Betrugsschutz
+- Limit von 5 Versuchen pro Tag
+- Erfordert Live-Foto (Liveness-Check)
+- Vergleich des Selfies mit dem Foto im Dokument
 
-## Стоимость
+## Kosten
 
 ### Stripe Identity Pricing
-- €1.50 за успешную верификацию (EU)
-- Платит пользователь: €1.99 (с маржой €0.49)
+- €1.50 für erfolgreiche Verifizierung (EU)
+- Zahlt der Benutzer: €1.99 (mit €0.49 Marge)
 
-### Настройка цены
+### Preis einstellen
 ```env
-VERIFICATION_FEE=199  # Цена в центах
+VERIFICATION_FEE=199  # Preis in Cent
 ```
 
-## Troubleshooting
+## Fehlerbehebung
 
 ### "Payment system not configured"
-Проверьте `STRIPE_SECRET_KEY` в `.env`
+Überprüfen Sie `STRIPE_SECRET_KEY` in `.env`
 
 ### "Too many verification attempts"
-Пользователь превысил лимит (5/день). Подождите 24 часа.
+Der Benutzer hat das Limit überschritten (5/Tag). Warten Sie 24 Stunden.
 
-### Webhook не работает
-1. Проверьте URL webhook в Stripe Dashboard
-2. Проверьте `STRIPE_IDENTITY_WEBHOOK_SECRET`
-3. Убедитесь, что endpoint доступен извне
+### Webhook funktioniert nicht
+1. Überprüfen Sie die Webhook-URL im Stripe Dashboard
+2. Überprüfen Sie `STRIPE_IDENTITY_WEBHOOK_SECRET`
+3. Stellen Sie sicher, dass der Endpoint von außen zugänglich ist
 
-### Верификация застряла на "pending"
-1. Проверьте webhook события в Stripe Dashboard
-2. Вручную вызовите `/check-session/{session_id}`
+### Verifizierung bleibt bei "pending" hängen
+1. Überprüfen Sie Webhook-Ereignisse im Stripe Dashboard
+2. Rufen Sie manuell `/check-session/{session_id}` auf
 
-## Дальнейшее развитие
+## Weiterentwicklung
 
-- [ ] Добавить email уведомления о статусе верификации
-- [ ] Добавить повторную верификацию через год
-- [ ] Интеграция с админ-панелью для ручной проверки
-- [ ] Аналитика верификаций
+- [ ] E-Mail-Benachrichtigungen über Verifizierungsstatus hinzufügen
+- [ ] Wiederholte Verifizierung nach einem Jahr hinzufügen
+- [ ] Integration mit Admin-Panel für manuelle Überprüfung
+- [ ] Verifizierungsanalytik

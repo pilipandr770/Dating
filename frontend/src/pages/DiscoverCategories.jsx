@@ -7,36 +7,36 @@ export default function DiscoverCategories() {
   const categories = [
     {
       id: 'relationship',
-      title: 'Отношения',
+      title: 'Beziehungen',
       icon: Heart,
-      description: 'Ищу серьезные отношения и любовь',
+      description: 'Suche ernsthafte Beziehungen und Liebe',
       color: 'from-pink-500 to-red-500',
       bgColor: 'bg-pink-50',
       borderColor: 'border-pink-200'
     },
     {
       id: 'friendship',
-      title: 'Дружба',
+      title: 'Freundschaft',
       icon: Users,
-      description: 'Хочу найти новых друзей',
+      description: 'Möchte neue Freunde finden',
       color: 'from-blue-500 to-cyan-500',
       bgColor: 'bg-blue-50',
       borderColor: 'border-blue-200'
     },
     {
       id: 'intimate_services',
-      title: 'Платные услуги',
+      title: 'Bezahlte Dienstleistungen',
       icon: Sparkles,
-      description: 'Эскорт и VIP сопровождение',
+      description: 'Escort und VIP-Begleitung',
       color: 'from-purple-500 to-pink-500',
       bgColor: 'bg-purple-50',
       borderColor: 'border-purple-200'
     },
     {
       id: 'casual',
-      title: 'Без обязательств',
+      title: 'Ohne Verpflichtungen',
       icon: Coffee,
-      description: 'Легкое общение и встречи',
+      description: 'Leichte Kommunikation und Treffen',
       color: 'from-orange-500 to-yellow-500',
       bgColor: 'bg-orange-50',
       borderColor: 'border-orange-200'
@@ -54,9 +54,9 @@ export default function DiscoverCategories() {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link to="/dashboard" className="flex items-center text-gray-600 hover:text-gray-900">
             <ArrowLeft className="w-5 h-5 mr-2" />
-            Назад
+            Zurück
           </Link>
-          <h1 className="text-2xl font-bold text-pink-600">Выберите категорию</h1>
+          <h1 className="text-2xl font-bold text-pink-600">Kategorie auswählen</h1>
           <div className="w-20"></div>
         </div>
       </header>
@@ -65,10 +65,10 @@ export default function DiscoverCategories() {
       <main className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-3">
-            Что вы ищете?
+            Was suchen Sie?
           </h2>
           <p className="text-gray-600">
-            Выберите категорию знакомств для поиска совпадений
+            Wählen Sie eine Dating-Kategorie, um Übereinstimmungen zu finden
           </p>
         </div>
 
@@ -96,7 +96,7 @@ export default function DiscoverCategories() {
 
                 <div className="mt-6 flex items-center text-sm font-semibold">
                   <span className={`bg-gradient-to-r ${category.color} bg-clip-text text-transparent`}>
-                    Начать поиск →
+                    Suche starten →
                   </span>
                 </div>
               </button>
@@ -114,12 +114,12 @@ export default function DiscoverCategories() {
             </div>
             <div>
               <h4 className="font-bold text-blue-900 mb-2">
-                Вы можете искать в разных категориях
+                Sie können in verschiedenen Kategorien suchen
               </h4>
               <p className="text-sm text-blue-800">
-                Не ограничивайте себя одной категорией! Вернитесь на эту страницу в любое время,
-                чтобы переключиться на другую категорию знакомств. Ваш профиль остается в вашей
-                основной категории, но вы можете искать людей из любой категории.
+                Beschränken Sie sich nicht auf eine Kategorie! Kehren Sie jederzeit zu dieser Seite zurück,
+                um zu einer anderen Dating-Kategorie zu wechseln. Ihr Profil bleibt in Ihrer
+                Hauptkategorie, aber Sie können Menschen aus jeder Kategorie suchen.
               </p>
             </div>
           </div>

@@ -1,23 +1,23 @@
-# LoveMatch - Пошаговый План Реализации
+# LoveMatch - Schritt-für-Schritt Implementierungsplan
 
-## Phase 1: Core Foundation (Сейчас)
+## Phase 1: Core Foundation (Aktuell)
 
 ### Step 1: Database Migration ✓
-- [x] Расширить User модель
-- [x] Добавить поля для AI, service providers, trust score
-- [ ] Создать migration скрипт
-- [ ] Применить к PostgreSQL
+- [x] User-Modell erweitern
+- [x] Felder für AI, Service Provider, Trust Score hinzufügen
+- [ ] Migration-Script erstellen
+- [ ] Auf PostgreSQL anwenden
 
 ### Step 2: Backend Authentication API ✓
 - [x] POST /api/auth/register
 - [x] POST /api/auth/login
 - [x] GET /api/auth/me
-- [ ] Протестировать endpoints
+- [ ] Endpoints testen
 
 ### Step 3: Frontend Landing Page
-- [ ] Создать Hero секцию с объяснением
-- [ ] Секция "Как это работает"
-- [ ] Секция "4 типа знакомств" с карточками
+- [ ] Hero-Sektion mit Erklärung erstellen
+- [ ] Sektion "Wie es funktioniert"
+- [ ] Sektion "4 Arten von Bekanntschaften" mit Karten
 - [ ] Секция "Наши преимущества" (AI, безопасность)
 - [ ] Секция "Тарифные планы"
 - [ ] CTA кнопка "Зарегистрироваться"

@@ -40,7 +40,7 @@ export default function Bookings() {
         navigate(`/bookings${newSearchString ? '?' + newSearchString : ''}`, { replace: true });
       } else if (newBooking && newBooking.payment_status === 'paid') {
         console.log('[BOOKINGS PAGE] Booking already paid, not opening modal');
-        // Просто убираем параметр из URL
+        // Entfernen Sie einfach den Parameter aus der URL
         const newSearchParams = new URLSearchParams(searchParams);
         newSearchParams.delete('new_booking');
         navigate(`/bookings${newSearchParams.toString() ? '?' + newSearchParams.toString() : ''}`, { replace: true });
@@ -84,7 +84,7 @@ export default function Bookings() {
       alert(response.data.message);
       fetchBookings();
     } catch (err) {
-      alert(err.response?.data?.error || 'Ошибка подтверждения');
+      alert(err.response?.data?.error || 'Bestätigungsfehler');
     } finally {
       setProcessing(null);
     }
@@ -102,7 +102,7 @@ export default function Bookings() {
       alert(response.data.message);
       fetchBookings();
     } catch (err) {
-      alert(err.response?.data?.error || 'Ошибка завершения');
+      alert(err.response?.data?.error || 'Abschlussfehler');
     } finally {
       setProcessing(null);
     }
@@ -121,10 +121,10 @@ export default function Bookings() {
 
   const getStatusBadge = (status) => {
     const badges = {
-      'pending': { color: 'bg-yellow-100 text-yellow-800', text: 'Ожидает', icon: Clock },
-      'confirmed': { color: 'bg-blue-100 text-blue-800', text: 'Подтверждено', icon: CheckCircle },
-      'completed': { color: 'bg-green-100 text-green-800', text: 'Завершено', icon: CheckCircle },
-      'cancelled': { color: 'bg-red-100 text-red-800', text: 'Отменено', icon: XCircle }
+      'pending': { color: 'bg-yellow-100 text-yellow-800', text: 'Ausstehend', icon: Clock },
+      'confirmed': { color: 'bg-blue-100 text-blue-800', text: 'Bestätigt', icon: CheckCircle },
+      'completed': { color: 'bg-green-100 text-green-800', text: 'Abgeschlossen', icon: CheckCircle },
+      'cancelled': { color: 'bg-red-100 text-red-800', text: 'Storniert', icon: XCircle }
     };
     const badge = badges[status] || badges['pending'];
     const Icon = badge.icon;
@@ -138,10 +138,10 @@ export default function Bookings() {
 
   const getPaymentStatusBadge = (status) => {
     const badges = {
-      'pending': { color: 'bg-orange-100 text-orange-800', text: '💳 Не оплачено' },
-      'paid': { color: 'bg-green-100 text-green-800', text: '✓ Оплачено' },
-      'refunded': { color: 'bg-gray-100 text-gray-800', text: '↩ Возвращено' },
-      'failed': { color: 'bg-red-100 text-red-800', text: '✗ Ошибка' }
+      'pending': { color: 'bg-orange-100 text-orange-800', text: '💳 Nicht bezahlt' },
+      'paid': { color: 'bg-green-100 text-green-800', text: '✓ Bezahlt' },
+      'refunded': { color: 'bg-gray-100 text-gray-800', text: '↩ Erstattet' },
+      'failed': { color: 'bg-red-100 text-red-800', text: '✗ Fehler' }
     };
     const badge = badges[status] || badges['pending'];
     return (
@@ -154,7 +154,7 @@ export default function Bookings() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-xl text-gray-600">Загрузка бронирований...</div>
+        <div className="text-xl text-gray-600">Buchungen werden geladen...</div>
       </div>
     );
   }
@@ -166,9 +166,9 @@ export default function Bookings() {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link to="/dashboard" className="flex items-center text-gray-600 hover:text-gray-900">
             <ArrowLeft className="w-5 h-5 mr-2" />
-            Назад
+            Zurück
           </Link>
-          <h1 className="text-xl font-bold">Мои бронирования</h1>
+          <h1 className="text-xl font-bold">Meine Buchungen</h1>
           <div className="w-20"></div>
         </div>
 
@@ -184,7 +184,7 @@ export default function Bookings() {
               }`}
             >
               <User className="w-4 h-4" />
-              Как клиент
+              Als Kunde
             </button>
 
             <button
@@ -196,7 +196,7 @@ export default function Bookings() {
               }`}
             >
               <Briefcase className="w-4 h-4" />
-              Как провайдер
+              Als Anbieter
             </button>
           </div>
         </div>
@@ -206,17 +206,17 @@ export default function Bookings() {
         {bookings.length === 0 ? (
           <div className="bg-white rounded-lg shadow-lg p-12 text-center">
             <Calendar className="w-20 h-20 text-gray-300 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-gray-700 mb-2">Нет бронирований</h2>
+            <h2 className="text-2xl font-bold text-gray-700 mb-2">Keine Buchungen</h2>
             <p className="text-gray-500 mb-6">
               {role === 'client'
-                ? 'У вас пока нет бронирований. Найдите провайдера услуг и создайте бронирование!'
-                : 'У вас пока нет заказов от клиентов.'}
+                ? 'Sie haben noch keine Buchungen. Finden Sie einen Dienstleister und erstellen Sie eine Buchung!'
+                : 'Sie haben noch keine Kundenaufträge.'}
             </p>
             <button
               onClick={() => navigate('/search')}
               className="bg-pink-600 text-white px-6 py-3 rounded-lg hover:bg-pink-700 transition"
             >
-              Найти провайдеров
+              Anbieter finden
             </button>
           </div>
         ) : (
@@ -232,19 +232,19 @@ export default function Bookings() {
                       </div>
                       <div>
                         <p className="font-bold text-gray-900">
-                          {booking.other_user?.first_name || booking.other_user?.username || 'Неизвестно'}
+                          {booking.other_user?.first_name || booking.other_user?.username || 'Unbekannt'}
                         </p>
                         <p className="text-sm text-gray-600">
-                          {role === 'client' ? 'Провайдер' : 'Клиент'}
+                          {role === 'client' ? 'Anbieter' : 'Kunde'}
                         </p>
                       </div>
                     </div>
                     <div className="text-right">
                       <p className="text-2xl font-bold text-pink-600">
-                        {booking.total_amount.toLocaleString()} ₽
+                        {booking.total_amount.toLocaleString()} €
                       </p>
                       <p className="text-xs text-gray-500">
-                        {booking.duration_hours} ч × {booking.hourly_rate} ₽/ч
+                        {booking.duration_hours} Std × {booking.hourly_rate} €/Std
                       </p>
                     </div>
                   </div>
@@ -256,7 +256,7 @@ export default function Bookings() {
                     <div className="flex items-center gap-2 text-gray-700">
                       <Calendar className="w-5 h-5 text-pink-600" />
                       <div>
-                        <p className="text-xs text-gray-500">Дата встречи</p>
+                        <p className="text-xs text-gray-500">Treffdatum</p>
                         <p className="font-semibold">{formatDate(booking.booking_date)}</p>
                       </div>
                     </div>
@@ -264,8 +264,8 @@ export default function Bookings() {
                     <div className="flex items-center gap-2 text-gray-700">
                       <Clock className="w-5 h-5 text-pink-600" />
                       <div>
-                        <p className="text-xs text-gray-500">Длительность</p>
-                        <p className="font-semibold">{booking.duration_hours} ч</p>
+                        <p className="text-xs text-gray-500">Dauer</p>
+                        <p className="font-semibold">{booking.duration_hours} Std</p>
                       </div>
                     </div>
                   </div>
@@ -274,7 +274,7 @@ export default function Bookings() {
                     <div className="flex items-start gap-2 text-gray-700 mb-3 bg-gray-50 rounded-lg p-3">
                       <MapPin className="w-5 h-5 text-pink-600 flex-shrink-0 mt-0.5" />
                       <div>
-                        <p className="text-xs text-gray-500">Место встречи</p>
+                        <p className="text-xs text-gray-500">Treffpunkt</p>
                         <p className="text-sm">{booking.location}</p>
                       </div>
                     </div>
@@ -284,7 +284,7 @@ export default function Bookings() {
                     <div className="flex items-start gap-2 text-gray-700 mb-3 bg-gray-50 rounded-lg p-3">
                       <FileText className="w-5 h-5 text-pink-600 flex-shrink-0 mt-0.5" />
                       <div>
-                        <p className="text-xs text-gray-500">Примечания</p>
+                        <p className="text-xs text-gray-500">Notizen</p>
                         <p className="text-sm">{booking.notes}</p>
                       </div>
                     </div>
@@ -304,7 +304,7 @@ export default function Bookings() {
                         onClick={() => handlePayBooking(booking)}
                         className="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition font-semibold"
                       >
-                        💳 Оплатить
+                        💳 Bezahlen
                       </button>
                     )}
 
@@ -315,7 +315,7 @@ export default function Bookings() {
                         disabled={processing === booking.id}
                         className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50 font-semibold"
                       >
-                        {processing === booking.id ? 'Обработка...' : '✓ Подтвердить'}
+                        {processing === booking.id ? 'Verarbeitung...' : '✓ Bestätigen'}
                       </button>
                     )}
 
@@ -325,7 +325,7 @@ export default function Bookings() {
                         disabled={processing === booking.id}
                         className="flex-1 bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition disabled:opacity-50 font-semibold"
                       >
-                        {processing === booking.id ? 'Обработка...' : '✓ Завершить'}
+                        {processing === booking.id ? 'Verarbeitung...' : '✓ Abschließen'}
                       </button>
                     )}
                   </div>
@@ -333,7 +333,7 @@ export default function Bookings() {
                   {/* Booking metadata */}
                   <div className="mt-3 pt-3 border-t border-gray-100">
                     <p className="text-xs text-gray-400">
-                      Создано: {formatDate(booking.created_at)}
+                      Erstellt: {formatDate(booking.created_at)}
                     </p>
                   </div>
                 </div>

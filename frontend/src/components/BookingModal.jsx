@@ -60,7 +60,7 @@ export default function BookingModal({ provider, onClose, onSuccess }) {
       console.error('[BOOKING MODAL] Error response:', err.response?.data);
       console.error('[BOOKING MODAL] Error status:', err.response?.status);
       console.error('='.repeat(60));
-      setError(err.response?.data?.error || 'Ошибка создания бронирования');
+      setError(err.response?.data?.error || 'Fehler beim Erstellen der Buchung');
     } finally {
       console.log('[BOOKING MODAL] 🏁 Request finished, setting loading=false');
       setLoading(false);
@@ -82,7 +82,7 @@ export default function BookingModal({ provider, onClose, onSuccess }) {
       <div className="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="bg-gradient-to-r from-pink-600 to-purple-600 px-6 py-4 flex items-center justify-between text-white">
-          <h2 className="text-2xl font-bold">Забронировать встречу</h2>
+          <h2 className="text-2xl font-bold">Termin buchen</h2>
           <button
             onClick={onClose}
             className="p-1 hover:bg-white hover:bg-opacity-20 rounded-full transition"
@@ -256,14 +256,14 @@ export default function BookingModal({ provider, onClose, onSuccess }) {
               onClick={onClose}
               className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-semibold"
             >
-              Отмена
+              Abbrechen
             </button>
             <button
               type="submit"
               disabled={loading}
               className="flex-1 px-6 py-3 bg-gradient-to-r from-pink-600 to-purple-600 text-white rounded-lg hover:from-pink-700 hover:to-purple-700 transition disabled:opacity-50 font-semibold"
             >
-              {loading ? 'Создание...' : 'Создать бронирование'}
+              {loading ? 'Erstelle...' : 'Buchung erstellen'}
             </button>
           </div>
         </form>

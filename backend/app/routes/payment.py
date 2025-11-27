@@ -149,6 +149,11 @@ def create_booking():
             print(f"[CREATE BOOKING] Provider not found or not a service provider")
             return jsonify({'error': 'Provider not found'}), 404
 
+        # Prevent self-booking
+        if current_user_id == data['provider_id']:
+            print(f"[CREATE BOOKING] User trying to book with themselves")
+            return jsonify({'error': 'Cannot book with yourself'}), 400
+
         if not provider.hourly_rate:
             print(f"[CREATE BOOKING] Provider has no hourly rate")
             return jsonify({'error': 'Provider has not set hourly rate'}), 400

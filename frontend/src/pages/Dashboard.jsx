@@ -60,7 +60,7 @@ export default function Dashboard() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-xl text-gray-600">Загрузка...</div>
+        <div className="text-xl text-gray-600">Laden...</div>
       </div>
     );
   }
@@ -77,14 +77,14 @@ export default function Dashboard() {
                 onClick={() => navigate('/admin')}
                 className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition flex items-center gap-2"
               >
-                🛡️ Админ
+                🛡️ Admin
               </button>
             )}
             <button
               onClick={handleLogout}
               className="px-4 py-2 text-gray-600 hover:text-gray-900"
             >
-              Выйти
+              Abmelden
             </button>
           </div>
         </div>
@@ -93,24 +93,24 @@ export default function Dashboard() {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         <div className="bg-white rounded-lg shadow-lg p-8">
-          <h2 className="text-3xl font-bold mb-6">Добро пожаловать, {user?.username}!</h2>
+          <h2 className="text-3xl font-bold mb-6">Willkommen, {user?.username}!</h2>
 
           <div className="grid md:grid-cols-2 gap-6">
             {/* User Info Card */}
             <div className="border border-gray-200 rounded-lg p-6">
-              <h3 className="text-xl font-bold mb-4">Ваш профиль</h3>
+              <h3 className="text-xl font-bold mb-4">Ihr Profil</h3>
               <div className="space-y-2 text-gray-700">
-                <p><strong>Email:</strong> {user?.email}</p>
-                <p><strong>Имя пользователя:</strong> {user?.username}</p>
-                <p><strong>Возраст:</strong> {user?.age}</p>
-                <p><strong>Город:</strong> {user?.city}</p>
-                <p><strong>Цель:</strong> {user?.goal}</p>
-                <p><strong>Тариф:</strong> {user?.subscription_plan}</p>
+                <p><strong>E-Mail:</strong> {user?.email}</p>
+                <p><strong>Benutzername:</strong> {user?.username}</p>
+                <p><strong>Alter:</strong> {user?.age}</p>
+                <p><strong>Stadt:</strong> {user?.city}</p>
+                <p><strong>Ziel:</strong> {user?.goal}</p>
+                <p><strong>Tarif:</strong> {user?.subscription_plan}</p>
                 <p><strong>Trust Score:</strong> {user?.trust_score}</p>
                 {user?.is_service_provider && (
                   <>
-                    <p><strong>Бизнес:</strong> {user?.business_name}</p>
-                    <p><strong>Верификация:</strong> {user?.service_verified ? 'Да' : 'Ожидание'}</p>
+                    <p><strong>Geschäft:</strong> {user?.business_name}</p>
+                    <p><strong>Verifizierung:</strong> {user?.service_verified ? 'Ja' : 'Ausstehend'}</p>
                   </>
                 )}
               </div>
@@ -118,25 +118,25 @@ export default function Dashboard() {
 
             {/* Quick Actions */}
             <div className="border border-gray-200 rounded-lg p-6">
-              <h3 className="text-xl font-bold mb-4">Быстрые действия</h3>
+              <h3 className="text-xl font-bold mb-4">Schnelle Aktionen</h3>
               <div className="space-y-3">
                 <button
                   onClick={() => navigate('/edit-profile')}
                   className="w-full bg-pink-600 text-white py-3 rounded-lg hover:bg-pink-700 transition"
                 >
-                  Редактировать профиль
+                  Profil bearbeiten
                 </button>
                 <button
                   onClick={() => navigate('/discover/categories')}
                   className="w-full bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 transition"
                 >
-                  Найти совпадения
+                  Matches finden
                 </button>
                 <button
                   onClick={() => navigate('/likes')}
                   className="w-full bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition relative"
                 >
-                  💕 Вы понравились
+                  💕 Sie gefallen jemandem
                   {likesCount > 0 && (
                     <span className="absolute top-2 right-2 bg-yellow-400 text-red-900 text-xs font-bold px-2 py-1 rounded-full animate-pulse">
                       {likesCount}
@@ -147,10 +147,10 @@ export default function Dashboard() {
                   onClick={() => navigate('/matches')}
                   className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition"
                 >
-                  Мои совпадения
+                  Meine Matches
                 </button>
                 <button className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition">
-                  Upgrade план
+                  Plan upgraden
                 </button>
 
                 {user?.is_service_provider && (
@@ -159,13 +159,13 @@ export default function Dashboard() {
                       onClick={() => navigate('/provider/dashboard')}
                       className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-lg hover:from-purple-700 hover:to-pink-700 transition font-semibold"
                     >
-                      📊 Статистика провайдера
+                      📊 Anbieterstatistik
                     </button>
                     <button
                       onClick={() => navigate('/provider/settings')}
                       className="w-full bg-gradient-to-r from-pink-600 to-orange-600 text-white py-3 rounded-lg hover:from-pink-700 hover:to-orange-700 transition font-semibold"
                     >
-                      ⚙️ Настройки провайдера
+                      ⚙️ Anbietereinstellungen
                     </button>
                   </>
                 )}
@@ -174,7 +174,7 @@ export default function Dashboard() {
                   onClick={() => navigate('/bookings')}
                   className="w-full bg-cyan-600 text-white py-3 rounded-lg hover:bg-cyan-700 transition"
                 >
-                  📅 Мои бронирования
+                  📅 Meine Buchungen
                 </button>
               </div>
             </div>
@@ -184,7 +184,7 @@ export default function Dashboard() {
           {!user?.email_verified && (
             <div className="mt-6 p-4 bg-yellow-100 border border-yellow-300 rounded-lg">
               <p className="text-yellow-800">
-                <strong>Внимание:</strong> Подтвердите свой email для доступа ко всем функциям
+                <strong>Achtung:</strong> Bestätigen Sie Ihre E-Mail für Zugang zu allen Funktionen
               </p>
             </div>
           )}
@@ -197,11 +197,11 @@ export default function Dashboard() {
                   <Shield className="w-5 h-5 text-pink-600" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-800">Требуется верификация</h3>
+                  <h3 className="font-semibold text-gray-800">Verifizierung erforderlich</h3>
                   <p className="text-sm text-gray-600">
                     {verificationStatus.identity_verification_status === 'pending' 
-                      ? 'Верификация в процессе...' 
-                      : 'Подтвердите возраст (18+) для доступа к платформе'}
+                      ? 'Verifizierung läuft...' 
+                      : 'Bestätigen Sie Ihr Alter (18+) für Plattformzugang'}
                   </p>
                 </div>
               </div>
@@ -210,7 +210,7 @@ export default function Dashboard() {
                 className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-4 py-2 rounded-lg font-medium hover:opacity-90 transition flex items-center gap-2"
               >
                 <ArrowRight className="w-4 h-4" />
-                Пройти
+                Starten
               </button>
             </div>
           )}
@@ -220,7 +220,7 @@ export default function Dashboard() {
             <div className="mt-6 p-3 bg-green-50 border border-green-200 rounded-xl flex items-center gap-3">
               <CheckCircle className="w-5 h-5 text-green-500" />
               <span className="text-green-700 text-sm">
-                <strong>Верификация пройдена</strong> — ваша личность подтверждена
+                <strong>Verifizierung abgeschlossen</strong> — Ihre Identität ist bestätigt
               </span>
             </div>
           )}
@@ -228,7 +228,7 @@ export default function Dashboard() {
           {user?.is_service_provider && !user?.service_verified && (
             <div className="mt-6 p-4 bg-blue-100 border border-blue-300 rounded-lg">
               <p className="text-blue-800">
-                <strong>Верификация:</strong> Ваш аккаунт провайдера находится на рассмотрении
+                <strong>Verifizierung:</strong> Ihr Anbieterkonto wird überprüft
               </p>
             </div>
           )}

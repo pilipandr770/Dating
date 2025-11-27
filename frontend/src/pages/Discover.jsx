@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { Heart, X, MessageCircle, ArrowLeft, Star, MapPin, Sparkles, Calendar, Users, Coffee } from 'lucide-react';
 import axios from 'axios';
-import BookingModal from '../components/BookingModal';
 
 export default function Discover() {
   const navigate = useNavigate();
@@ -15,7 +14,15 @@ export default function Discover() {
   const [error, setError] = useState('');
   const [showMatchModal, setShowMatchModal] = useState(false);
   const [matchedUser, setMatchedUser] = useState(null);
-  const [showBookingModal, setShowBookingModal] = useState(false);
+  const [showBookingForm, setShowBookingForm] = useState(false);
+  const [bookingFormData, setBookingFormData] = useState({
+    booking_date: '',
+    booking_time: '',
+    duration_hours: 1,
+    location: '',
+    notes: ''
+  });
+  const [bookingLoading, setBookingLoading] = useState(false);
 
   useEffect(() => {
     if (category) {
@@ -45,10 +52,10 @@ export default function Discover() {
 
   const getCategoryInfo = () => {
     const categories = {
-      'relationship': { title: 'Отношения', icon: Heart, color: 'pink' },
-      'friendship': { title: 'Дружба', icon: Users, color: 'blue' },
-      'intimate_services': { title: 'Платные услуги', icon: Sparkles, color: 'purple' },
-      'casual': { title: 'Без обязательств', icon: Coffee, color: 'orange' }
+      'relationship': { title: 'Beziehungen', icon: Heart, color: 'pink' },
+      'friendship': { title: 'Freundschaft', icon: Users, color: 'blue' },
+      'intimate_services': { title: 'Bezahlte Dienstleistungen', icon: Sparkles, color: 'purple' },
+      'casual': { title: 'Ohne Verpflichtungen', icon: Coffee, color: 'orange' }
     };
     return categories[category] || categories['relationship'];
   };
@@ -105,6 +112,67 @@ export default function Discover() {
     }
   };
 
+  const handleBookingSubmit = async (e) => {
+    e.preventDefault();
+    const currentUser = users[currentIndex];
+    if (!currentUser) return;
+
+    console.log('[DISCOVER BOOKING] Form submitted!');
+    console.log('[DISCOVER BOOKING] Form data:', bookingFormData);
+    console.log('[DISCOVER BOOKING] Provider ID:', currentUser?.id);
+
+    setBookingLoading(true);
+
+    try {
+      // Combine date and time
+      const bookingDateTime = new Date(`${bookingFormData.booking_date}T${bookingFormData.booking_time}`);
+      console.log('[DISCOVER BOOKING] Booking date time:', bookingDateTime.toISOString());
+
+      const token = localStorage.getItem('access_token');
+      const payload = {
+        provider_id: currentUser.id,
+        booking_date: bookingDateTime.toISOString(),
+        duration_hours: parseFloat(bookingFormData.duration_hours),
+        location: bookingFormData.location,
+        notes: bookingFormData.notes
+      };
+
+      console.log('[DISCOVER BOOKING] Sending POST request to backend...');
+      const response = await axios.post(
+        'http://localhost:5000/api/payment/bookings',
+        payload,
+        { headers: { 'Authorization': `Bearer ${token}` } }
+      );
+
+      console.log('[DISCOVER BOOKING] SUCCESS! Booking created:', response.data);
+      
+      // Reset form
+      setBookingFormData({
+        booking_date: '',
+        booking_time: '',
+        duration_hours: 1,
+        location: '',
+        notes: ''
+      });
+      setShowBookingForm(false);
+      
+      // Redirect to bookings page
+      navigate(`/bookings?new_booking=${response.data.booking.id}`);
+      
+    } catch (err) {
+      console.error('[DISCOVER BOOKING] ERROR:', err);
+      alert(err.response?.data?.error || 'Fehler beim Erstellen der Buchung');
+    } finally {
+      setBookingLoading(false);
+    }
+  };
+
+  const calculateBookingTotal = () => {
+    const currentUser = users[currentIndex];
+    if (!currentUser) return '0';
+    return (bookingFormData.duration_hours * currentUser.hourly_rate).toLocaleString();
+  };
+
   const currentUser = users[currentIndex];
 
   if (!category) {
@@ -116,7 +184,7 @@ export default function Discover() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-xl text-gray-600">Загрузка...</div>
+        <div className="text-xl text-gray-600">Laden...</div>
       </div>
     );
   }
@@ -131,7 +199,7 @@ export default function Discover() {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link to="/discover/categories" className="flex items-center text-gray-600 hover:text-gray-900">
             <ArrowLeft className="w-5 h-5 mr-2" />
-            Назад
+            Zurück
           </Link>
           <div className="flex items-center gap-2">
             <CategoryIcon className={`w-5 h-5 text-${categoryInfo.color}-600`} />
@@ -154,15 +222,15 @@ export default function Discover() {
         {!currentUser ? (
           <div className="bg-white rounded-2xl shadow-xl p-12 text-center">
             <Sparkles className="w-16 h-16 text-pink-600 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold mb-2">Нет больше пользователей</h2>
+            <h2 className="text-2xl font-bold mb-2">Keine weiteren Benutzer</h2>
             <p className="text-gray-600 mb-6">
-              Вы просмотрели всех доступных пользователей. Заходите позже!
+              Du hast alle verfügbaren Benutzer durchgesehen. Komm später wieder!
             </p>
             <button
               onClick={() => navigate('/dashboard')}
               className="bg-pink-600 text-white px-6 py-3 rounded-lg hover:bg-pink-700 transition"
             >
-              Вернуться на главную
+              Zurück zur Startseite
             </button>
           </div>
         ) : (
@@ -214,9 +282,9 @@ export default function Discover() {
                 {currentUser.is_service_provider && (
                   <div className="inline-flex items-center bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-semibold mb-4">
                     <Sparkles className="w-4 h-4 mr-1" />
-                    Провайдер услуг
-                    {currentUser.service_verified && ' • Верифицирован'}
-                    {currentUser.hourly_rate && ` • €${currentUser.hourly_rate}/час`}
+                    Dienstleister
+                    {currentUser.service_verified && ' • Verifiziert'}
+                    {currentUser.hourly_rate && ` • €${currentUser.hourly_rate}/Std`}
                   </div>
                 )}
 
@@ -236,16 +304,106 @@ export default function Discover() {
               </div>
             </div>
 
-            {/* Booking Button for Service Providers */}
-            {currentUser.is_service_provider && currentUser.hourly_rate && (
+            {/* Booking Section for Service Providers */}
+            {currentUser.is_service_provider && currentUser.hourly_rate && currentUser.hourly_rate > 0 && (
               <div className="mb-6">
-                <button
-                  onClick={() => setShowBookingModal(true)}
-                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-4 rounded-xl hover:from-purple-700 hover:to-pink-700 transition font-semibold shadow-lg flex items-center justify-center gap-2"
-                >
-                  <Calendar className="w-5 h-5" />
-                  Забронировать встречу • {currentUser.hourly_rate.toLocaleString()} ₽/ч
-                </button>
+                {!showBookingForm ? (
+                  <button
+                    onClick={() => setShowBookingForm(true)}
+                    className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-4 rounded-xl hover:from-purple-700 hover:to-pink-700 transition font-semibold shadow-lg flex items-center justify-center gap-2"
+                  >
+                    <Calendar className="w-5 h-5" />
+                    Termin buchen • {currentUser.hourly_rate.toLocaleString()} €/Std
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => setShowBookingForm(false)}
+                    className="w-full bg-gray-500 text-white py-4 rounded-xl hover:bg-gray-600 transition font-semibold shadow-lg flex items-center justify-center gap-2"
+                  >
+                    <X className="w-5 h-5" />
+                    Buchung abbrechen
+                  </button>
+                )}
+
+                {/* Inline Booking Form */}
+                {showBookingForm && (
+                  <div className="mt-4 p-4 bg-white rounded-xl border shadow-lg">
+                    <h3 className="text-lg font-bold mb-3 text-center">Termin vereinbaren</h3>
+                    <form onSubmit={handleBookingSubmit} className="space-y-3">
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Datum
+                          </label>
+                          <input
+                            type="date"
+                            value={bookingFormData.booking_date}
+                            onChange={(e) => setBookingFormData({...bookingFormData, booking_date: e.target.value})}
+                            min={new Date().toISOString().split('T')[0]}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Uhrzeit
+                          </label>
+                          <input
+                            type="time"
+                            value={bookingFormData.booking_time}
+                            onChange={(e) => setBookingFormData({...bookingFormData, booking_time: e.target.value})}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm"
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Dauer
+                        </label>
+                        <select
+                          value={bookingFormData.duration_hours}
+                          onChange={(e) => setBookingFormData({...bookingFormData, duration_hours: parseFloat(e.target.value)})}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm"
+                        >
+                          <option value={1}>1 Stunde</option>
+                          <option value={2}>2 Stunden</option>
+                          <option value={3}>3 Stunden</option>
+                          <option value={4}>4 Stunden</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Ort
+                        </label>
+                        <input
+                          type="text"
+                          value={bookingFormData.location}
+                          onChange={(e) => setBookingFormData({...bookingFormData, location: e.target.value})}
+                          placeholder="z.B. Hotel, Wohnung..."
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm"
+                        />
+                      </div>
+
+                      <div className="bg-gray-50 p-3 rounded-lg">
+                        <div className="flex justify-between items-center text-sm font-semibold">
+                          <span>Gesamt:</span>
+                          <span className="text-pink-600">{calculateBookingTotal()} €</span>
+                        </div>
+                      </div>
+
+                      <button
+                        type="submit"
+                        disabled={bookingLoading}
+                        className="w-full bg-gradient-to-r from-pink-600 to-purple-600 text-white py-2 rounded-lg hover:from-pink-700 hover:to-purple-700 transition disabled:opacity-50 font-semibold text-sm"
+                      >
+                        {bookingLoading ? 'Wird gebucht...' : 'Buchen'}
+                      </button>
+                    </form>
+                  </div>
+                )}
               </div>
             )}
 
@@ -280,9 +438,9 @@ export default function Discover() {
           <div className="bg-white rounded-2xl p-8 max-w-md w-full text-center animate-bounce-in">
             <div className="mb-6">
               <div className="text-6xl mb-4">💕</div>
-              <h2 className="text-3xl font-bold text-pink-600 mb-2">Это совпадение!</h2>
+              <h2 className="text-3xl font-bold text-pink-600 mb-2">Das ist ein Match!</h2>
               <p className="text-gray-600">
-                Вы и {matchedUser.first_name || matchedUser.username} понравились друг другу!
+                Du und {matchedUser.first_name || matchedUser.username} habt euch gegenseitig geliked!
               </p>
             </div>
 
@@ -298,7 +456,7 @@ export default function Discover() {
               </div>
               <Heart className="w-8 h-8 text-pink-600 fill-pink-600" />
               <div className="w-20 h-20 rounded-full overflow-hidden bg-gradient-to-br from-pink-200 to-purple-200 flex items-center justify-center text-white font-bold text-2xl">
-                Вы
+                Du
               </div>
             </div>
 
@@ -307,30 +465,17 @@ export default function Discover() {
                 onClick={() => setShowMatchModal(false)}
                 className="flex-1 px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
               >
-                Продолжить поиск
+                Weitersuchen
               </button>
               <button
                 onClick={() => navigate('/matches')}
                 className="flex-1 bg-pink-600 text-white px-6 py-3 rounded-lg hover:bg-pink-700 transition"
               >
-                Написать сообщение
+                Nachricht schreiben
               </button>
             </div>
           </div>
         </div>
-      )}
-
-      {/* Booking Modal */}
-      {showBookingModal && currentUser && (
-        <BookingModal
-          provider={currentUser}
-          onClose={() => setShowBookingModal(false)}
-          onSuccess={(booking) => {
-            setShowBookingModal(false);
-            // Redirect to bookings page with new booking ID
-            navigate(`/bookings?new_booking=${booking.id}`);
-          }}
-        />
       )}
     </div>
   );

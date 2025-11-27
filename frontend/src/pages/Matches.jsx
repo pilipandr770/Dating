@@ -36,16 +36,16 @@ export default function Matches() {
     const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-    if (diffHours < 1) return 'Только что';
-    if (diffHours < 24) return `${diffHours}ч назад`;
-    if (diffDays < 7) return `${diffDays}д назад`;
-    return date.toLocaleDateString('ru-RU');
+    if (diffHours < 1) return 'Gerade eben';
+    if (diffHours < 24) return `vor ${diffHours} Std.`;
+    if (diffDays < 7) return `vor ${diffDays} Tagen`;
+    return date.toLocaleDateString('de-DE');
   };
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-xl text-gray-600">Загрузка...</div>
+        <div className="text-xl text-gray-600">Laden...</div>
       </div>
     );
   }
@@ -57,9 +57,9 @@ export default function Matches() {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link to="/dashboard" className="flex items-center text-gray-600 hover:text-gray-900">
             <ArrowLeft className="w-5 h-5 mr-2" />
-            Назад
+            Zurück
           </Link>
-          <h1 className="text-2xl font-bold text-pink-600">Совпадения</h1>
+          <h1 className="text-2xl font-bold text-pink-600">Matches</h1>
           <div className="w-20"></div>
         </div>
       </header>
@@ -75,15 +75,15 @@ export default function Matches() {
         {matches.length === 0 ? (
           <div className="bg-white rounded-lg shadow-lg p-12 text-center">
             <Heart className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold mb-2">Пока нет совпадений</h2>
+            <h2 className="text-2xl font-bold mb-2">Noch keine Matches</h2>
             <p className="text-gray-600 mb-6">
-              Начните листать профили, чтобы найти свою пару!
+              Beginnen Sie mit dem Swipen von Profilen, um Ihren Partner zu finden!
             </p>
             <button
               onClick={() => navigate('/discover')}
               className="bg-pink-600 text-white px-6 py-3 rounded-lg hover:bg-pink-700 transition"
             >
-              Начать поиск
+              Suche starten
             </button>
           </div>
         ) : (
@@ -144,7 +144,7 @@ export default function Matches() {
 
                   <button className="w-full bg-pink-600 text-white py-2 rounded-lg hover:bg-pink-700 transition flex items-center justify-center">
                     <MessageCircle className="w-4 h-4 mr-2" />
-                    Написать сообщение
+                    Nachricht schreiben
                   </button>
                 </div>
               </div>

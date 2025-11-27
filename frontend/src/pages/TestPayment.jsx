@@ -105,7 +105,7 @@ export default function TestPayment() {
                     onClick={() => setSelectedBooking(booking)}
                     className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 font-semibold"
                   >
-                    💳 Оплатить через Stripe
+                    💳 Mit Stripe bezahlen
                   </button>
                 )}
               </div>

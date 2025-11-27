@@ -49,9 +49,9 @@ def set_hourly_rate(username, hourly_rate):
         """), {'rate': hourly_rate, 'username': username})
         conn.commit()
         
-        print(f"✅ Updated hourly_rate to {hourly_rate} ₽/час for {username}")
+        print(f"✅ Updated hourly_rate to {hourly_rate} €/Std for {username}")
 
 if __name__ == "__main__":
     # Set hourly rate for lisa203
     print("🚀 Setting hourly rate for provider...")
-    set_hourly_rate('lisa203', 5000)  # 5000 руб/час
+    set_hourly_rate('lisa203', 5000)  # 5000 €/Std

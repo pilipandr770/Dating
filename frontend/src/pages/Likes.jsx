@@ -37,14 +37,14 @@ export default function Likes() {
       );
 
       if (response.data.is_match) {
-        alert('🎉 Это совпадение! Теперь вы можете общаться');
+        alert('🎉 Das ist ein Match! Jetzt können Sie chatten');
       }
 
       // Move to next
       setCurrentIndex(currentIndex + 1);
     } catch (err) {
       console.error('Failed to like back:', err);
-      alert('Ошибка при отправке лайка');
+      alert('Fehler beim Senden des Likes');
     }
   };
 
@@ -67,7 +67,7 @@ export default function Likes() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-xl text-gray-600">Загрузка...</div>
+        <div className="text-xl text-gray-600">Laden...</div>
       </div>
     );
   }
@@ -81,11 +81,11 @@ export default function Likes() {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link to="/dashboard" className="flex items-center text-gray-600 hover:text-gray-900">
             <ArrowLeft className="w-5 h-5 mr-2" />
-            Назад
+            Zurück
           </Link>
           <div className="flex items-center gap-2">
             <Heart className="w-6 h-6 text-pink-600" />
-            <h1 className="text-2xl font-bold text-pink-600">Вы понравились</h1>
+            <h1 className="text-2xl font-bold text-pink-600">Sie haben gefallen</h1>
           </div>
           <div className="w-20"></div>
         </div>
@@ -96,36 +96,36 @@ export default function Likes() {
         {likes.length === 0 ? (
           <div className="text-center">
             <Heart className="w-24 h-24 text-gray-300 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-gray-700 mb-2">Пока нет лайков</h2>
+            <h2 className="text-2xl font-bold text-gray-700 mb-2">Noch keine Likes</h2>
             <p className="text-gray-500 mb-6">
-              Когда кому-то понравится ваш профиль, вы увидите это здесь
+              Wenn jemand Ihr Profil mag, sehen Sie es hier
             </p>
             <button
               onClick={() => navigate('/discover')}
               className="px-6 py-3 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition"
             >
-              Искать совпадения
+              Matches suchen
             </button>
           </div>
         ) : currentIndex >= likes.length ? (
           <div className="text-center">
             <Heart className="w-24 h-24 text-pink-600 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-gray-700 mb-2">Вы просмотрели все лайки!</h2>
+            <h2 className="text-2xl font-bold text-gray-700 mb-2">Sie haben alle Likes angesehen!</h2>
             <p className="text-gray-500 mb-6">
-              Проверьте позже или ищите новые совпадения
+              Überprüfen Sie später oder suchen Sie neue Matches
             </p>
             <div className="flex gap-4 justify-center">
               <button
                 onClick={() => navigate('/discover')}
                 className="px-6 py-3 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition"
               >
-                Искать совпадения
+                Matches suchen
               </button>
               <button
                 onClick={() => navigate('/matches')}
                 className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
               >
-                Мои совпадения
+                Meine Matches
               </button>
             </div>
           </div>
@@ -134,7 +134,7 @@ export default function Likes() {
             {/* Progress */}
             <div className="mb-4 flex items-center justify-between">
               <span className="text-sm text-gray-600">
-                {currentIndex + 1} из {likes.length}
+                {currentIndex + 1} von {likes.length}
               </span>
               <Heart className="w-5 h-5 text-pink-600 animate-pulse" />
             </div>
@@ -159,7 +159,7 @@ export default function Likes() {
                 <div className="absolute top-4 left-4 bg-pink-600 text-white px-4 py-2 rounded-full shadow-lg">
                   <div className="flex items-center gap-2">
                     <Heart className="w-4 h-4 fill-current" />
-                    <span className="font-bold">Вам понравились!</span>
+                    <span className="font-bold">Sie haben Ihnen gefallen!</span>
                   </div>
                 </div>
               </div>
@@ -191,9 +191,9 @@ export default function Likes() {
                 {currentLike.user.is_service_provider && (
                   <div className="mb-4 p-3 bg-purple-50 rounded-lg">
                     <p className="text-sm text-purple-800">
-                      💼 Провайдер услуг
-                      {currentLike.user.service_verified && ' • ✓ Верифицирован'}
-                      {currentLike.user.hourly_rate && ` • ${currentLike.user.hourly_rate}₽/час`}
+                      💼 Dienstleister
+                      {currentLike.user.service_verified && ' • ✓ Verifiziert'}
+                      {currentLike.user.hourly_rate && ` • ${currentLike.user.hourly_rate}€/Std.`}
                     </p>
                   </div>
                 )}
@@ -205,14 +205,14 @@ export default function Likes() {
                     className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 transition font-bold"
                   >
                     <X className="w-6 h-6" />
-                    Пропустить
+                    Überspringen
                   </button>
                   <button
                     onClick={() => handleLikeBack(currentLike.user.id)}
                     className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-pink-600 to-purple-600 text-white rounded-xl hover:from-pink-700 hover:to-purple-700 transition font-bold shadow-lg"
                   >
                     <Heart className="w-6 h-6 fill-current" />
-                    Лайк в ответ
+                    Like zurück
                   </button>
                 </div>
               </div>

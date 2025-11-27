@@ -52,7 +52,7 @@ export default function EditProfile() {
       });
       setPhotos(user.photos || []);
     } catch (err) {
-      setError('Не удалось загрузить данные профиля');
+      setError('Profildaten konnten nicht geladen werden');
     }
   };
 
@@ -81,7 +81,7 @@ export default function EditProfile() {
         window.location.href = response.data.url;
       }
     } catch (err) {
-      setError(err.response?.data?.error || 'Ошибка при создании сессии верификации');
+      setError(err.response?.data?.error || 'Fehler beim Erstellen der Verifizierungssitzung');
       setVerificationLoading(false);
     }
   };
@@ -94,7 +94,7 @@ export default function EditProfile() {
   const handlePhotoUpload = async (e) => {
     const files = Array.from(e.target.files);
     if (photos.length + files.length > MAX_PHOTOS) {
-      setError(`Можно загрузить максимум ${MAX_PHOTOS} фотографий`);
+      setError(`Maximal ${MAX_PHOTOS} Fotos erlaubt`);
       return;
     }
 
@@ -105,19 +105,19 @@ export default function EditProfile() {
       const uploadedUrls = [];
 
       for (const file of files) {
-        // Проверка размера файла (макс 5MB)
+        // Dateigröße prüfen (max 5MB)
         if (file.size > 5 * 1024 * 1024) {
-          setError(`Файл ${file.name} слишком большой. Максимум 5MB`);
+          setError(`Datei ${file.name} ist zu groß. Maximal 5MB`);
           continue;
         }
 
-        // Проверка типа файла
+        // Dateityp prüfen
         if (!file.type.startsWith('image/')) {
-          setError(`Файл ${file.name} не является изображением`);
+          setError(`Datei ${file.name} ist kein Bild`);
           continue;
         }
 
-        // Конвертируем в base64 для простоты (в продакшене используйте S3/Cloudinary)
+        // In base64 konvertieren für Einfachheit (im Produktiveinsatz S3/Cloudinary verwenden)
         const reader = new FileReader();
         const base64 = await new Promise((resolve, reject) => {
           reader.onload = () => resolve(reader.result);
@@ -129,9 +129,9 @@ export default function EditProfile() {
       }
 
       setPhotos([...photos, ...uploadedUrls]);
-      setSuccess('Фото успешно загружены');
+      setSuccess('Fotos erfolgreich hochgeladen');
     } catch (err) {
-      setError('Ошибка при загрузке фотографий');
+      setError('Fehler beim Hochladen der Fotos');
     } finally {
       setUploading(false);
     }
@@ -148,7 +148,7 @@ export default function EditProfile() {
     setSuccess('');
 
     try {
-      // В реальном приложении создайте endpoint /api/user/profile для обновления профиля
+      // In einer echten Anwendung erstellen Sie den Endpoint /api/user/profile zum Aktualisieren des Profils
       const payload = {
         ...formData,
         age: parseInt(formData.age),
@@ -157,8 +157,8 @@ export default function EditProfile() {
         photos: photos,
       };
 
-      // Временно используем прямой axios запрос
-      // TODO: добавить метод updateProfile в authAPI
+      // Vorübergehend direkte axios-Anfrage verwenden
+      // TODO: updateProfile-Methode zu authAPI hinzufügen
       const response = await fetch('http://localhost:5000/api/user/profile', {
         method: 'PUT',
         headers: {
@@ -172,10 +172,10 @@ export default function EditProfile() {
         throw new Error('Failed to update profile');
       }
 
-      setSuccess('Профиль успешно обновлен!');
+      setSuccess('Profil erfolgreich aktualisiert!');
       setTimeout(() => navigate('/dashboard'), 2000);
     } catch (err) {
-      setError('Ошибка при обновлении профиля');
+      setError('Fehler beim Aktualisieren des Profils');
     } finally {
       setLoading(false);
     }
@@ -188,7 +188,7 @@ export default function EditProfile() {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link to="/dashboard" className="flex items-center text-gray-600 hover:text-gray-900">
             <ArrowLeft className="w-5 h-5 mr-2" />
-            Назад
+            Zurück
           </Link>
           <h1 className="text-2xl font-bold text-pink-600">LoveMatch</h1>
           <div className="w-20"></div>
@@ -198,7 +198,7 @@ export default function EditProfile() {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="bg-white rounded-lg shadow-lg p-8">
-          <h2 className="text-3xl font-bold mb-6">Редактировать профиль</h2>
+          <h2 className="text-3xl font-bold mb-6">Profil bearbeiten</h2>
 
           {error && (
             <div className="mb-6 p-4 bg-red-100 border border-red-300 text-red-700 rounded-lg">
@@ -234,10 +234,10 @@ export default function EditProfile() {
                 
                 <div className="flex-1">
                   <h3 className="text-xl font-semibold text-gray-800 mb-1 flex items-center gap-2">
-                    Верификация личности
+                    Identitätsverifizierung
                     {verificationStatus?.identity_verified && verificationStatus?.identity_age_verified && (
                       <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
-                        ✓ Подтверждено
+                        ✓ Bestätigt
                       </span>
                     )}
                   </h3>
@@ -245,21 +245,21 @@ export default function EditProfile() {
                   {verificationStatus?.identity_verified && verificationStatus?.identity_age_verified ? (
                     <div>
                       <p className="text-green-700 mb-2">
-                        Ваша личность и возраст (18+) подтверждены. Вы можете пользоваться всеми функциями платформы.
+                        Ihre Identität und Ihr Alter (18+) sind bestätigt. Sie können alle Plattformfunktionen nutzen.
                       </p>
                       <div className="flex items-center gap-4 text-sm text-gray-600">
                         {verificationStatus.identity_verified_at && (
-                          <span>Дата: {new Date(verificationStatus.identity_verified_at).toLocaleDateString('ru-RU')}</span>
+                          <span>Datum: {new Date(verificationStatus.identity_verified_at).toLocaleDateString('de-DE')}</span>
                         )}
                         {verificationStatus.identity_document_type && (
-                          <span>Документ: {verificationStatus.identity_document_type.replace('_', ' ')}</span>
+                          <span>Dokument: {verificationStatus.identity_document_type.replace('_', ' ')}</span>
                         )}
                       </div>
                     </div>
                   ) : verificationStatus?.identity_verification_status === 'pending' ? (
                     <div>
                       <p className="text-yellow-700 mb-3">
-                        Верификация в процессе. Пожалуйста, завершите проверку документов.
+                        Verifizierung läuft. Bitte schließen Sie die Dokumentenprüfung ab.
                       </p>
                       <button
                         type="button"
@@ -267,24 +267,24 @@ export default function EditProfile() {
                         className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition flex items-center gap-2"
                       >
                         <ExternalLink className="w-4 h-4" />
-                        Продолжить верификацию
+                        Verifizierung fortsetzen
                       </button>
                     </div>
                   ) : (
                     <div>
                       <p className="text-gray-600 mb-3">
-                        Для полного доступа к платформе необходимо подтвердить свой возраст (18+). 
-                        Это защищает всех пользователей от мошенников и ботов.
+                        Für vollen Plattformzugang müssen Sie Ihr Alter (18+) bestätigen. 
+                        Dies schützt alle Nutzer vor Betrügern und Bots.
                       </p>
                       
                       <div className="flex flex-wrap items-center gap-3 mb-3">
                         <div className="flex items-center gap-2 text-sm text-gray-500">
                           <Shield className="w-4 h-4" />
-                          <span>GDPR Compliant</span>
+                          <span>DSGVO-konform</span>
                         </div>
                         <div className="flex items-center gap-2 text-sm text-gray-500">
                           <CheckCircle className="w-4 h-4" />
-                          <span>Данные хранятся в Stripe</span>
+                          <span>Daten bei Stripe gespeichert</span>
                         </div>
                       </div>
                       
@@ -297,19 +297,19 @@ export default function EditProfile() {
                         {verificationLoading ? (
                           <>
                             <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                            Подготовка...
+                            Vorbereitung...
                           </>
                         ) : (
                           <>
                             <Shield className="w-5 h-5" />
-                            Пройти верификацию — €1.99
+                            Verifizierung starten — €1,99
                           </>
                         )}
                       </button>
                       
                       {verificationStatus?.verification_attempts > 0 && (
                         <p className="text-sm text-gray-500 mt-2">
-                          Попыток: {verificationStatus.verification_attempts}/5
+                          Versuche: {verificationStatus.verification_attempts}/5
                         </p>
                       )}
                     </div>
@@ -322,8 +322,8 @@ export default function EditProfile() {
                 <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg flex items-start gap-2">
                   <AlertTriangle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
                   <p className="text-sm text-yellow-700">
-                    <strong>Важно:</strong> Без верификации вы не сможете просматривать профили других пользователей, 
-                    отправлять сообщения и использовать другие функции платформы.
+                    <strong>Wichtig:</strong> Ohne Verifizierung können Sie keine Profile anderer Nutzer ansehen, 
+                    keine Nachrichten senden und keine anderen Plattformfunktionen nutzen.
                   </p>
                 </div>
               )}
@@ -333,7 +333,7 @@ export default function EditProfile() {
             <div className="mb-8">
               <h3 className="text-xl font-semibold mb-4 flex items-center">
                 <Camera className="w-5 h-5 mr-2" />
-                Фотографии ({photos.length}/{MAX_PHOTOS})
+                Fotos ({photos.length}/{MAX_PHOTOS})
               </h3>
 
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
@@ -353,7 +353,7 @@ export default function EditProfile() {
                     </button>
                     {index === 0 && (
                       <div className="absolute bottom-2 left-2 bg-pink-600 text-white text-xs px-2 py-1 rounded">
-                        Главное фото
+                        Hauptfoto
                       </div>
                     )}
                   </div>
@@ -370,49 +370,49 @@ export default function EditProfile() {
                       disabled={uploading}
                     />
                     {uploading ? (
-                      <div className="text-gray-400">Загрузка...</div>
+                      <div className="text-gray-400">Hochladen...</div>
                     ) : (
                       <>
                         <Upload className="w-8 h-8 text-gray-400 mb-2" />
-                        <span className="text-sm text-gray-500">Добавить фото</span>
+                        <span className="text-sm text-gray-500">Foto hinzufügen</span>
                       </>
                     )}
                   </label>
                 )}
               </div>
               <p className="text-sm text-gray-500">
-                Первое фото будет использоваться как главное. Максимум 5MB на фото.
+                Erstes Foto wird als Hauptfoto verwendet. Maximal 5MB pro Foto.
               </p>
             </div>
 
             {/* Basic Info */}
             <div className="mb-8">
-              <h3 className="text-xl font-semibold mb-4">Основная информация</h3>
+              <h3 className="text-xl font-semibold mb-4">Grundlegende Informationen</h3>
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1">Имя</label>
+                  <label className="block text-sm font-medium mb-1">Vorname</label>
                   <input
                     type="text"
                     name="first_name"
                     value={formData.first_name}
                     onChange={handleInputChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                    placeholder="Иван"
+                    placeholder="Max"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Фамилия</label>
+                  <label className="block text-sm font-medium mb-1">Nachname</label>
                   <input
                     type="text"
                     name="last_name"
                     value={formData.last_name}
                     onChange={handleInputChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                    placeholder="Иванов"
+                    placeholder="Müller"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Возраст *</label>
+                  <label className="block text-sm font-medium mb-1">Alter *</label>
                   <input
                     type="number"
                     name="age"
@@ -425,7 +425,7 @@ export default function EditProfile() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Пол *</label>
+                  <label className="block text-sm font-medium mb-1">Geschlecht *</label>
                   <select
                     name="gender"
                     value={formData.gender}
@@ -433,14 +433,14 @@ export default function EditProfile() {
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
                     required
                   >
-                    <option value="">Выберите</option>
-                    <option value="male">Мужской</option>
-                    <option value="female">Женский</option>
-                    <option value="other">Другое</option>
+                    <option value="">Auswählen</option>
+                    <option value="male">Männlich</option>
+                    <option value="female">Weiblich</option>
+                    <option value="other">Andere</option>
                   </select>
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium mb-1">Город *</label>
+                  <label className="block text-sm font-medium mb-1">Stadt *</label>
                   <input
                     type="text"
                     name="city"
@@ -456,23 +456,23 @@ export default function EditProfile() {
 
             {/* Bio */}
             <div className="mb-8">
-              <h3 className="text-xl font-semibold mb-4">О себе</h3>
+              <h3 className="text-xl font-semibold mb-4">Über mich</h3>
               <textarea
                 name="bio"
                 value={formData.bio}
                 onChange={handleInputChange}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
                 rows="4"
-                placeholder="Расскажите о себе..."
+                placeholder="Erzählen Sie über sich..."
               />
             </div>
 
             {/* Preferences */}
             <div className="mb-8">
-              <h3 className="text-xl font-semibold mb-4">Предпочтения</h3>
+              <h3 className="text-xl font-semibold mb-4">Präferenzen</h3>
               <div className="grid md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1">Кого ищете *</label>
+                  <label className="block text-sm font-medium mb-1">Wen suchen Sie? *</label>
                   <select
                     name="looking_for_gender"
                     value={formData.looking_for_gender}
@@ -480,14 +480,14 @@ export default function EditProfile() {
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
                     required
                   >
-                    <option value="">Выберите</option>
-                    <option value="male">Мужчин</option>
-                    <option value="female">Женщин</option>
-                    <option value="both">Всех</option>
+                    <option value="">Auswählen</option>
+                    <option value="male">Männer</option>
+                    <option value="female">Frauen</option>
+                    <option value="both">Alle</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Возраст от</label>
+                  <label className="block text-sm font-medium mb-1">Alter von</label>
                   <input
                     type="number"
                     name="age_min"
@@ -499,7 +499,7 @@ export default function EditProfile() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Возраст до</label>
+                  <label className="block text-sm font-medium mb-1">Alter bis</label>
                   <input
                     type="number"
                     name="age_max"
@@ -520,7 +520,7 @@ export default function EditProfile() {
                 onClick={() => navigate('/dashboard')}
                 className="flex-1 px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
               >
-                Отмена
+                Abbrechen
               </button>
               <button
                 type="submit"
@@ -528,11 +528,11 @@ export default function EditProfile() {
                 className="flex-1 bg-pink-600 text-white px-6 py-3 rounded-lg hover:bg-pink-700 transition disabled:opacity-50 flex items-center justify-center"
               >
                 {loading ? (
-                  'Сохранение...'
+                  'Speichern...'
                 ) : (
                   <>
                     <Save className="w-5 h-5 mr-2" />
-                    Сохранить изменения
+                    Änderungen speichern
                   </>
                 )}
               </button>

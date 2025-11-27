@@ -38,40 +38,40 @@ export default function Register() {
 
     if (step === 2) {
       if (!formData.email || !formData.password || !formData.confirmPassword || !formData.username) {
-        setError('Пожалуйста, заполните все обязательные поля');
+        setError('Bitte füllen Sie alle Pflichtfelder aus');
         return false;
       }
       if (formData.password !== formData.confirmPassword) {
-        setError('Пароли не совпадают');
+        setError('Passwörter stimmen nicht überein');
         return false;
       }
       if (formData.password.length < 8) {
-        setError('Пароль должен содержать минимум 8 символов');
+        setError('Passwort muss mindestens 8 Zeichen enthalten');
         return false;
       }
     }
 
     if (step === 3) {
       if (!formData.age || !formData.gender || !formData.city) {
-        setError('Пожалуйста, заполните все обязательные поля');
+        setError('Bitte füllen Sie alle Pflichtfelder aus');
         return false;
       }
       if (formData.age < 18 || formData.age > 100) {
-        setError('Возраст должен быть от 18 до 100 лет');
+        setError('Alter muss zwischen 18 und 100 Jahren sein');
         return false;
       }
     }
 
     if (step === 4) {
       if (!formData.looking_for_gender) {
-        setError('Пожалуйста, укажите кого вы ищете');
+        setError('Bitte geben Sie an, wen Sie suchen');
         return false;
       }
     }
 
     if (step === 5 && formData.goal === 'intimate_services') {
       if (!formData.business_name || !formData.hourly_rate) {
-        setError('Пожалуйста, заполните все поля для провайдера услуг');
+        setError('Bitte füllen Sie alle Anbieterfelder aus');
         return false;
       }
     }
@@ -124,7 +124,7 @@ export default function Register() {
       localStorage.setItem('access_token', response.data.access_token);
       navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.error || 'Ошибка регистрации. Попробуйте еще раз.');
+      setError(err.response?.data?.error || 'Registrierungsfehler. Bitte versuchen Sie es erneut.');
     } finally {
       setLoading(false);
     }
@@ -135,8 +135,8 @@ export default function Register() {
       <div className="container mx-auto px-4 max-w-2xl">
         <div className="bg-white rounded-lg shadow-lg p-8">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Регистрация</h1>
-            <p className="text-gray-600">Шаг {step} из {formData.goal === 'intimate_services' ? '5' : '4'}</p>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Registrierung</h1>
+            <p className="text-gray-600">Schritt {step} von {formData.goal === 'intimate_services' ? '5' : '4'}</p>
           </div>
 
           <div className="mb-8">
@@ -156,37 +156,37 @@ export default function Register() {
 
           {step === 1 && (
             <div>
-              <h2 className="text-2xl font-bold mb-6 text-center">Выберите цель знакомства</h2>
+              <h2 className="text-2xl font-bold mb-6 text-center">Wählen Sie Ihr Kennenlernen-Ziel</h2>
               <div className="grid md:grid-cols-2 gap-4">
                 <GoalButton
                   icon={<Heart className="w-8 h-8 text-red-500" />}
-                  title="Отношения"
-                  description="Долгосрочные отношения"
+                  title="Beziehung"
+                  description="Langfristige Beziehung"
                   onClick={() => handleGoalSelect('relationship')}
                 />
                 <GoalButton
                   icon={<Users className="w-8 h-8 text-blue-500" />}
-                  title="Дружба"
-                  description="Новые друзья"
+                  title="Freundschaft"
+                  description="Neue Freunde"
                   onClick={() => handleGoalSelect('friendship')}
                 />
                 <GoalButton
                   icon={<Heart className="w-8 h-8 text-pink-500" />}
-                  title="Интим-услуги"
-                  description="Легальные услуги"
-                  badge="Верификация"
+                  title="Intimdienste"
+                  description="Legale Dienstleistungen"
+                  badge="Verifizierung"
                   onClick={() => handleGoalSelect('intimate_services')}
                 />
                 <GoalButton
                   icon={<Heart className="w-8 h-8 text-purple-500" />}
-                  title="Разовые встречи"
-                  description="Casual dating"
+                  title="Gelegentliche Treffen"
+                  description="Casual Dating"
                   onClick={() => handleGoalSelect('casual')}
                 />
               </div>
               <div className="mt-6 text-center">
                 <Link to="/login" className="text-pink-600 hover:underline">
-                  Уже есть аккаунт? Войти
+                  Bereits ein Konto? Anmelden
                 </Link>
               </div>
             </div>
@@ -194,10 +194,10 @@ export default function Register() {
 
           {step === 2 && (
             <div>
-              <h2 className="text-2xl font-bold mb-6">Основная информация</h2>
+              <h2 className="text-2xl font-bold mb-6">Grundlegende Informationen</h2>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1">Email *</label>
+                  <label className="block text-sm font-medium mb-1">E-Mail *</label>
                   <input
                     type="email"
                     name="email"
@@ -209,7 +209,7 @@ export default function Register() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Имя пользователя *</label>
+                  <label className="block text-sm font-medium mb-1">Benutzername *</label>
                   <input
                     type="text"
                     name="username"
@@ -221,26 +221,26 @@ export default function Register() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Пароль *</label>
+                  <label className="block text-sm font-medium mb-1">Passwort *</label>
                   <input
                     type="password"
                     name="password"
                     value={formData.password}
                     onChange={handleInputChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                    placeholder="Минимум 8 символов"
+                    placeholder="Mindestens 8 Zeichen"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Подтвердите пароль *</label>
+                  <label className="block text-sm font-medium mb-1">Passwort bestätigen *</label>
                   <input
                     type="password"
                     name="confirmPassword"
                     value={formData.confirmPassword}
                     onChange={handleInputChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                    placeholder="Повторите пароль"
+                    placeholder="Passwort wiederholen"
                     required
                   />
                 </div>
@@ -248,10 +248,10 @@ export default function Register() {
               <div className="flex gap-4 mt-6">
                 <button onClick={handleBack} className="flex-1 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition flex items-center justify-center">
                   <ChevronLeft className="w-5 h-5 mr-2" />
-                  Назад
+                  Zurück
                 </button>
                 <button onClick={handleNext} className="flex-1 bg-pink-600 text-white py-3 rounded-lg hover:bg-pink-700 transition flex items-center justify-center">
-                  Далее
+                  Weiter
                   <ChevronRight className="w-5 h-5 ml-2" />
                 </button>
               </div>
@@ -260,10 +260,10 @@ export default function Register() {
 
           {step === 3 && (
             <div>
-              <h2 className="text-2xl font-bold mb-6">Личные данные</h2>
+              <h2 className="text-2xl font-bold mb-6">Persönliche Daten</h2>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1">Возраст *</label>
+                  <label className="block text-sm font-medium mb-1">Alter *</label>
                   <input
                     type="number"
                     name="age"
@@ -277,30 +277,30 @@ export default function Register() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Пол *</label>
+                  <label className="block text-sm font-medium mb-1">Geschlecht *</label>
                   <select name="gender" value={formData.gender} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent" required>
-                    <option value="">Выберите пол</option>
-                    <option value="male">Мужской</option>
-                    <option value="female">Женский</option>
-                    <option value="other">Другое</option>
+                    <option value="">Geschlecht wählen</option>
+                    <option value="male">Männlich</option>
+                    <option value="female">Weiblich</option>
+                    <option value="other">Andere</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Город *</label>
+                  <label className="block text-sm font-medium mb-1">Stadt *</label>
                   <input type="text" name="city" value={formData.city} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent" placeholder="Berlin" required />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">О себе (опционально)</label>
-                  <textarea name="bio" value={formData.bio} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent" placeholder="Расскажите о себе..." rows={4} />
+                  <label className="block text-sm font-medium mb-1">Über mich (optional)</label>
+                  <textarea name="bio" value={formData.bio} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent" placeholder="Erzählen Sie über sich..." rows={4} />
                 </div>
               </div>
               <div className="flex gap-4 mt-6">
                 <button onClick={handleBack} className="flex-1 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition flex items-center justify-center">
                   <ChevronLeft className="w-5 h-5 mr-2" />
-                  Назад
+                  Zurück
                 </button>
                 <button onClick={handleNext} className="flex-1 bg-pink-600 text-white py-3 rounded-lg hover:bg-pink-700 transition flex items-center justify-center">
-                  Далее
+                  Weiter
                   <ChevronRight className="w-5 h-5 ml-2" />
                 </button>
               </div>
@@ -309,33 +309,33 @@ export default function Register() {
 
           {step === 4 && (
             <div>
-              <h2 className="text-2xl font-bold mb-6">Предпочтения</h2>
+              <h2 className="text-2xl font-bold mb-6">Präferenzen</h2>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1">Кого ищете *</label>
+                  <label className="block text-sm font-medium mb-1">Wen suchen Sie? *</label>
                   <select name="looking_for_gender" value={formData.looking_for_gender} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent" required>
-                    <option value="">Выберите</option>
-                    <option value="male">Мужчин</option>
-                    <option value="female">Женщин</option>
-                    <option value="both">Всех</option>
+                    <option value="">Auswählen</option>
+                    <option value="male">Männer</option>
+                    <option value="female">Frauen</option>
+                    <option value="both">Alle</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Возраст от</label>
+                  <label className="block text-sm font-medium mb-1">Alter von</label>
                   <input type="number" name="age_min" value={formData.age_min} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent" min="18" max="100" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Возраст до</label>
+                  <label className="block text-sm font-medium mb-1">Alter bis</label>
                   <input type="number" name="age_max" value={formData.age_max} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent" min="18" max="100" />
                 </div>
               </div>
               <div className="flex gap-4 mt-6">
                 <button onClick={handleBack} className="flex-1 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition flex items-center justify-center">
                   <ChevronLeft className="w-5 h-5 mr-2" />
-                  Назад
+                  Zurück
                 </button>
                 <button onClick={formData.goal === 'intimate_services' ? handleNext : handleSubmit} disabled={loading} className="flex-1 bg-pink-600 text-white py-3 rounded-lg hover:bg-pink-700 transition flex items-center justify-center disabled:opacity-50">
-                  {loading ? 'Загрузка...' : (formData.goal === 'intimate_services' ? 'Далее' : 'Зарегистрироваться')}
+                  {loading ? 'Laden...' : (formData.goal === 'intimate_services' ? 'Weiter' : 'Registrieren')}
                   {!loading && <ChevronRight className="w-5 h-5 ml-2" />}
                 </button>
               </div>
@@ -344,29 +344,29 @@ export default function Register() {
 
           {step === 5 && formData.goal === 'intimate_services' && (
             <div>
-              <h2 className="text-2xl font-bold mb-6">Информация о провайдере</h2>
+              <h2 className="text-2xl font-bold mb-6">Anbieterinformationen</h2>
               <div className="bg-yellow-50 border border-yellow-300 p-4 rounded-lg mb-6">
                 <p className="text-sm text-yellow-800">
-                  Для провайдеров интим-услуг обязательна верификация. После регистрации вам нужно будет предоставить документы.
+                  Für Intimdienstleister ist eine Verifizierung erforderlich. Nach der Registrierung müssen Sie Dokumente einreichen.
                 </p>
               </div>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1">Название бизнеса *</label>
-                  <input type="text" name="business_name" value={formData.business_name || ''} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent" placeholder="Название студии/имя" required />
+                  <label className="block text-sm font-medium mb-1">Geschäftsname *</label>
+                  <input type="text" name="business_name" value={formData.business_name || ''} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent" placeholder="Studioname/Name" required />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Ставка за час (€) *</label>
+                  <label className="block text-sm font-medium mb-1">Stundensatz (€) *</label>
                   <input type="number" name="hourly_rate" value={formData.hourly_rate || ''} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent" placeholder="100" min="0" required />
                 </div>
               </div>
               <div className="flex gap-4 mt-6">
                 <button onClick={handleBack} className="flex-1 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition flex items-center justify-center">
                   <ChevronLeft className="w-5 h-5 mr-2" />
-                  Назад
+                  Zurück
                 </button>
                 <button onClick={handleSubmit} disabled={loading} className="flex-1 bg-pink-600 text-white py-3 rounded-lg hover:bg-pink-700 transition flex items-center justify-center disabled:opacity-50">
-                  {loading ? 'Загрузка...' : 'Зарегистрироваться'}
+                  {loading ? 'Laden...' : 'Registrieren'}
                 </button>
               </div>
             </div>

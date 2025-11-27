@@ -25,7 +25,7 @@ export default function AdminPanel() {
       });
 
       if (!response.data.user.is_admin) {
-        alert('У вас нет доступа к админ-панели');
+        alert('Sie haben keinen Zugriff auf das Admin-Panel');
         navigate('/dashboard');
       }
     } catch (err) {
@@ -63,7 +63,7 @@ export default function AdminPanel() {
   };
 
   const impersonateUser = async (userId, username) => {
-    if (!confirm(`Войти от имени ${username}?`)) return;
+    if (!confirm(`Als ${username} anmelden?`)) return;
 
     try {
       const response = await axios.post(
@@ -76,10 +76,10 @@ export default function AdminPanel() {
 
       // Save new token
       localStorage.setItem('access_token', response.data.access_token);
-      alert(`Теперь вы вошли как ${username}`);
+      alert(`Sie sind jetzt als ${username} angemeldet`);
       navigate('/dashboard');
     } catch (err) {
-      alert('Ошибка входа от имени пользователя');
+      alert('Fehler beim Anmelden als Benutzer');
       console.error(err);
     }
   };
@@ -87,7 +87,7 @@ export default function AdminPanel() {
   if (loading && !users.length) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-xl text-gray-600">Загрузка...</div>
+        <div className="text-xl text-gray-600">Lädt...</div>
       </div>
     );
   }
@@ -99,11 +99,11 @@ export default function AdminPanel() {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link to="/dashboard" className="flex items-center text-gray-600 hover:text-gray-900">
             <ArrowLeft className="w-5 h-5 mr-2" />
-            Назад
+            Zurück
           </Link>
           <div className="flex items-center gap-2">
             <Shield className="w-6 h-6 text-pink-600" />
-            <h1 className="text-2xl font-bold text-pink-600">Админ-панель</h1>
+            <h1 className="text-2xl font-bold text-pink-600">Admin-Panel</h1>
           </div>
           <div className="w-20"></div>
         </div>
@@ -116,7 +116,7 @@ export default function AdminPanel() {
             <div className="bg-white rounded-lg shadow p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Всего пользователей</p>
+                  <p className="text-sm text-gray-600">Gesamt Benutzer</p>
                   <p className="text-3xl font-bold text-gray-900">{stats.total_users}</p>
                 </div>
                 <Users className="w-10 h-10 text-blue-500" />
@@ -126,7 +126,7 @@ export default function AdminPanel() {
             <div className="bg-white rounded-lg shadow p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Активных</p>
+                  <p className="text-sm text-gray-600">Aktiv</p>
                   <p className="text-3xl font-bold text-green-600">{stats.active_users}</p>
                 </div>
                 <Activity className="w-10 h-10 text-green-500" />
@@ -136,7 +136,7 @@ export default function AdminPanel() {
             <div className="bg-white rounded-lg shadow p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Совпадений</p>
+                  <p className="text-sm text-gray-600">Matches</p>
                   <p className="text-3xl font-bold text-pink-600">{stats.total_matches}</p>
                 </div>
                 <Heart className="w-10 h-10 text-pink-500" />
@@ -146,7 +146,7 @@ export default function AdminPanel() {
             <div className="bg-white rounded-lg shadow p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Сообщений</p>
+                  <p className="text-sm text-gray-600">Nachrichten</p>
                   <p className="text-3xl font-bold text-purple-600">{stats.total_messages}</p>
                 </div>
                 <MessageCircle className="w-10 h-10 text-purple-500" />
@@ -168,7 +168,7 @@ export default function AdminPanel() {
                 setSearch(e.target.value);
                 setCurrentPage(1);
               }}
-              placeholder="Поиск по email, username, имени..."
+              placeholder="Suche nach E-Mail, Benutzername, Name..."
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
             />
           </div>
@@ -178,15 +178,15 @@ export default function AdminPanel() {
             <table className="w-full">
               <thead className="bg-gray-50 border-b">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Username</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Имя</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Город</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Цель</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Подписка</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Trust</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Статус</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Действия</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">E-Mail</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Benutzername</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stadt</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ziel</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Abonnement</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Vertrauen</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aktionen</th>
                 </tr>
               </thead>
               <tbody className="divide-y">
@@ -224,11 +224,11 @@ export default function AdminPanel() {
                     <td className="px-4 py-3 text-sm text-gray-900">{user.trust_score}</td>
                     <td className="px-4 py-3 text-sm">
                       {user.is_banned ? (
-                        <span className="px-2 py-1 bg-red-100 text-red-800 rounded text-xs">Banned</span>
+                        <span className="px-2 py-1 bg-red-100 text-red-800 rounded text-xs">Gesperrt</span>
                       ) : user.is_active ? (
-                        <span className="px-2 py-1 bg-green-100 text-green-800 rounded text-xs">Active</span>
+                        <span className="px-2 py-1 bg-green-100 text-green-800 rounded text-xs">Aktiv</span>
                       ) : (
-                        <span className="px-2 py-1 bg-gray-100 text-gray-800 rounded text-xs">Inactive</span>
+                        <span className="px-2 py-1 bg-gray-100 text-gray-800 rounded text-xs">Inaktiv</span>
                       )}
                     </td>
                     <td className="px-4 py-3 text-sm">
@@ -237,7 +237,7 @@ export default function AdminPanel() {
                         className="flex items-center gap-1 px-3 py-1 bg-pink-600 text-white rounded hover:bg-pink-700 transition text-xs"
                       >
                         <LogIn className="w-3 h-3" />
-                        Войти
+                        Anmelden
                       </button>
                     </td>
                   </tr>
@@ -254,17 +254,17 @@ export default function AdminPanel() {
                 disabled={currentPage === 1}
                 className="px-4 py-2 border rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Назад
+                Zurück
               </button>
               <span className="px-4 py-2">
-                Страница {currentPage} из {totalPages}
+                Seite {currentPage} von {totalPages}
               </span>
               <button
                 onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
                 className="px-4 py-2 border rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Вперед
+                Weiter
               </button>
             </div>
           )}

@@ -10,22 +10,22 @@ export default function Landing() {
           LoveMatch
         </h1>
         <p className="text-2xl text-gray-600 mb-4">
-          Знакомства нового поколения в Германии
+          Dating der neuen Generation in Deutschland
         </p>
         <p className="text-lg text-gray-500 mb-8 max-w-2xl mx-auto">
-          Выберите свою цель знакомства. Искусственный интеллект защитит вас от мошенников
-          и поможет в общении. Безопасно, прозрачно, легально.
+          Wählen Sie Ihr Dating-Ziel. Künstliche Intelligenz schützt Sie vor Betrügern
+          und hilft bei der Kommunikation. Sicher, transparent, legal.
         </p>
         <Link
           to="/register"
           className="inline-block bg-pink-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-pink-700 transition"
         >
-          Начать знакомство
+          Jetzt kennenlernen
         </Link>
         <p className="mt-4 text-sm text-gray-500">
-          Уже есть аккаунт?{' '}
+          Bereits ein Konto?{' '}
           <Link to="/login" className="text-pink-600 hover:underline">
-            Войти
+            Anmelden
           </Link>
         </p>
       </section>
@@ -33,29 +33,29 @@ export default function Landing() {
       {/* 4 Types of Dating */}
       <section className="container mx-auto px-4 py-16">
         <h2 className="text-4xl font-bold text-center mb-12">
-          4 типа знакомств
+          4 Dating-Typen
         </h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           <GoalCard
             icon={<Heart className="w-12 h-12 text-red-500" />}
-            title="Отношения"
-            description="Ищете любовь и долгосрочные отношения"
+            title="Beziehung"
+            description="Suchen Sie Liebe und langfristige Beziehungen"
           />
           <GoalCard
             icon={<Users className="w-12 h-12 text-blue-500" />}
-            title="Дружба"
-            description="Новые друзья и интересные знакомства"
+            title="Freundschaft"
+            description="Neue Freunde und interessante Bekanntschaften"
           />
           <GoalCard
             icon={<Heart className="w-12 h-12 text-pink-500" />}
-            title="Интим-услуги"
-            description="Легальные услуги с верификацией и безопасными платежами"
-            badge="Верификация обязательна"
+            title="Intimdienste"
+            description="Legale Dienstleistungen mit Verifizierung und sicheren Zahlungen"
+            badge="Verifizierung erforderlich"
           />
           <GoalCard
             icon={<Heart className="w-12 h-12 text-purple-500" />}
-            title="Разовые встречи"
-            description="Casual dating без обязательств"
+            title="Gelegentliche Treffen"
+            description="Casual Dating ohne Verpflichtungen"
           />
         </div>
       </section>
@@ -64,38 +64,38 @@ export default function Landing() {
       <section className="bg-gray-50 py-16">
         <div className="container mx-auto px-4">
           <h2 className="text-4xl font-bold text-center mb-12">
-            Наши преимущества
+            Unsere Vorteile
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
             <FeatureCard
               icon={<Brain className="w-10 h-10 text-purple-600" />}
-              title="AI Ассистент"
-              description="Помощь в общении и умные подсказки для диалогов"
+              title="KI-Assistent"
+              description="Kommunikationshilfe und intelligente Dialogtipps"
             />
             <FeatureCard
               icon={<Shield className="w-10 h-10 text-green-600" />}
-              title="Защита от мошенников"
-              description="AI автоматически распознает признаки обмана и предупреждает вас"
+              title="Betrugschutz"
+              description="KI erkennt automatisch Betrugsanzeichen und warnt Sie"
             />
             <FeatureCard
               icon={<Video className="w-10 h-10 text-blue-600" />}
-              title="Кинотеатр"
-              description="Смотрите фильмы вместе онлайн (Premium план)"
+              title="Kino"
+              description="Filme gemeinsam online schauen (Premium-Plan)"
             />
             <FeatureCard
               icon={<CheckCircle className="w-10 h-10 text-pink-600" />}
-              title="Верификация"
-              description="Все провайдеры услуг проходят обязательную проверку"
+              title="Verifizierung"
+              description="Alle Dienstleister durchlaufen eine obligatorische Überprüfung"
             />
             <FeatureCard
               icon={<Heart className="w-10 h-10 text-red-600" />}
               title="Trust Score"
-              description="Система доверия защищает от подозрительных пользователей"
+              description="Vertrauenssystem schützt vor verdächtigen Nutzern"
             />
             <FeatureCard
               icon={<Users className="w-10 h-10 text-indigo-600" />}
-              title="Умный Matching"
-              description="Алгоритм подбирает совпадения по вашим предпочтениям"
+              title="Smart Matching"
+              description="Algorithmus findet Matches nach Ihren Präferenzen"
             />
           </div>
         </div>
@@ -104,40 +104,40 @@ export default function Landing() {
       {/* Pricing */}
       <section className="container mx-auto px-4 py-16">
         <h2 className="text-4xl font-bold text-center mb-12">
-          Тарифные планы
+          Tarifpläne
         </h2>
         <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           <PricingCard
             name="Free"
             price="€0"
             features={[
-              'До 10 совпадений в день',
-              'Базовый чат',
-              'Профиль с фото',
+              'Bis zu 10 Matches pro Tag',
+              'Basis-Chat',
+              'Profil mit Fotos',
             ]}
-            notIncluded={['AI ассистент', 'Кинотеатр', 'Приоритет в поиске']}
+            notIncluded={['KI-Assistent', 'Kino', 'Suchpriorität']}
           />
           <PricingCard
             name="Standard"
-            price="€9.99"
+            price="€9,99"
             popular
             features={[
-              'До 50 совпадений в день',
-              'AI ассистент',
-              'AI защита от мошенников',
-              'Кинотеатр',
-              'Приоритет в поиске',
+              'Bis zu 50 Matches pro Tag',
+              'KI-Assistent',
+              'KI-Betrugsschutz',
+              'Kino',
+              'Suchpriorität',
             ]}
           />
           <PricingCard
             name="Premium"
-            price="€19.99"
+            price="€19,99"
             features={[
-              'Безлимит совпадений',
-              'Все функции Standard',
-              'Видео-чат',
-              'Исчезающие сообщения',
-              'Расширенная аналитика',
+              'Unbegrenzte Matches',
+              'Alle Standard-Funktionen',
+              'Video-Chat',
+              'Verschwindende Nachrichten',
+              'Erweiterte Analysen',
             ]}
           />
         </div>
@@ -147,16 +147,16 @@ export default function Landing() {
       <section className="bg-pink-600 text-white py-16">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-4xl font-bold mb-4">
-            Готовы начать?
+            Bereit anzufangen?
           </h2>
           <p className="text-xl mb-8">
-            Присоединяйтесь к LoveMatch сегодня
+            Treten Sie LoveMatch heute bei
           </p>
           <Link
             to="/register"
             className="inline-block bg-white text-pink-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition"
           >
-            Зарегистрироваться бесплатно
+            Kostenlos registrieren
           </Link>
         </div>
       </section>
@@ -195,11 +195,11 @@ function PricingCard({ name, price, features, notIncluded, popular }) {
     <div className={`bg-white rounded-lg shadow-lg p-8 ${popular ? 'ring-2 ring-pink-600' : ''}`}>
       {popular && (
         <span className="bg-pink-600 text-white px-3 py-1 rounded-full text-sm">
-          Популярный
+          Beliebt
         </span>
       )}
       <h3 className="text-2xl font-bold mt-4">{name}</h3>
-      <p className="text-4xl font-bold my-4">{price}<span className="text-lg text-gray-500">/мес</span></p>
+      <p className="text-4xl font-bold my-4">{price}<span className="text-lg text-gray-500">/Monat</span></p>
       <ul className="space-y-3 mb-6">
         {features.map((feature, i) => (
           <li key={i} className="flex items-start">
@@ -215,7 +215,7 @@ function PricingCard({ name, price, features, notIncluded, popular }) {
         ))}
       </ul>
       <button className="w-full bg-pink-600 text-white py-3 rounded-lg font-semibold hover:bg-pink-700 transition">
-        Выбрать план
+        Plan wählen
       </button>
     </div>
   );
